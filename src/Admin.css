@@ -1,0 +1,196 @@
+/* src/Admin.css */
+
+/* --- Overall Page Container --- */
+.admin-page-container {
+  display: flex; /* Enables flexbox for sidebar-main content layout */
+  min-height: 100vh; /* Ensures it takes at least the full viewport height */
+  background-color: var(--color-alabaster); /* Soft off-white background for the entire admin page */
+  font-family: var(--font-body);
+  color: var(--navbar-text-color);
+}
+
+/* --- Main Content Area (right side of the dashboard) --- */
+.admin-main-content {
+  flex-grow: 1; /* Takes up all available space after Navbar */
+  padding: var(--spacing-xxl); /* Generous padding around the content */
+  background-color: var(--card-background); /* White background for the main content panel */
+  border-radius: 8px; /* Slightly rounded corners for the main panel */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Soft, prominent shadow */
+  margin: var(--spacing-xl) var(--spacing-xl) var(--spacing-xl) 0; /* Top, Right, Bottom, Left margin (left 0 to butt up against Navbar) */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl); /* Space between sections within the main content */
+  overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
+/* --- Access Denied Page (when user is not admin) --- */
+.admin-access-denied {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  text-align: center;
+  background-color: var(--color-alabaster);
+  color: var(--color-cafe-noir);
+  padding: var(--spacing-xl);
+}
+
+.admin-denied-heading {
+  font-size: 2rem;
+  color: var(--highlight-text-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.admin-denied-message {
+  font-size: 1.1rem;
+  color: var(--navbar-text-color);
+}
+
+/* --- Admin Header (Title + User Info/Logout) --- */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-alabaster); /* Subtle separator */
+  margin-bottom: var(--spacing-lg); /* Space below the header */
+}
+
+.admin-header-title {
+  font-size: 2.2rem; /* Larger title for the dashboard */
+  color: var(--highlight-text-color);
+  margin: 0; /* Remove default margins */
+  line-height: 1.2;
+}
+
+.admin-user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.admin-username {
+  font-weight: 600;
+  color: var(--navbar-text-color);
+  font-size: 1rem;
+}
+
+/* --- Logout Button --- */
+.admin-logout-button {
+  background-color: var(--color-cafe-noir); /* Darker button color for logout */
+  color: #fff;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.admin-logout-button:hover {
+  background-color: var(--color-khaki); /* Highlight on hover */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.admin-logout-button:active {
+  transform: translateY(0);
+}
+
+/* --- Tab Buttons Container --- */
+.admin-tab-buttons-container {
+  display: flex;
+  gap: var(--spacing-sm); /* Space between tab buttons */
+  margin-bottom: var(--spacing-xl); /* Space below the tab buttons */
+}
+
+/* --- Individual Tab Buttons --- */
+.admin-tab-button {
+  background-color: var(--color-alabaster); /* Light gray for inactive tabs */
+  color: var(--navbar-text-color);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 1px solid var(--color-alabaster);
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  flex-grow: 1; /* Make buttons grow to fill space evenly */
+  text-align: center;
+  white-space: nowrap; /* Prevent wrapping */
+  font-size: 1rem;
+}
+
+.admin-tab-button:hover {
+  background-color: var(--color-baby-powder);
+  border-color: var(--color-khaki); /* Highlight border on hover */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Active Tab Button --- */
+.admin-tab-button.active {
+  background-color: var(--color-khaki); /* Highlight color for active tab */
+  color: #fff;
+  border-color: var(--color-khaki);
+  font-weight: 700;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1024px) {
+  .admin-main-content {
+    padding: var(--spacing-xl);
+    margin: var(--spacing-lg); /* Adjust margin for smaller screens */
+  }
+  .admin-header-title {
+    font-size: 1.8rem;
+  }
+  .admin-logout-button,
+  .admin-tab-button {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-page-container {
+    flex-direction: column; /* Stack Navbar and main content vertically */
+  }
+  .admin-main-content {
+    margin: var(--spacing-md); /* Adjust margin for smaller screens */
+    border-radius: 0; /* Remove border-radius on main content if it's full width */
+    box-shadow: none; /* Remove shadow */
+  }
+  .admin-header {
+    flex-direction: column; /* Stack header elements */
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+  .admin-tab-buttons-container {
+    flex-wrap: wrap; /* Allow tab buttons to wrap */
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-md);
+  }
+  .admin-tab-button {
+    flex-basis: calc(50% - var(--spacing-xs)); /* Two buttons per row */
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-main-content {
+    padding: var(--spacing-md);
+    gap: var(--spacing-lg);
+  }
+  .admin-header-title {
+    font-size: 1.5rem;
+  }
+  .admin-tab-buttons-container {
+    flex-direction: column; /* Stack tab buttons vertically */
+    gap: var(--spacing-sm);
+  }
+  .admin-tab-button {
+    flex-basis: auto; /* Full width */
+  }
+}

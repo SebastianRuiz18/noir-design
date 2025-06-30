@@ -1,0 +1,195 @@
+/* Footer.css */
+
+/* --- Base Styles (for larger screens / default) --- */
+.footer-container {
+  background-color: #A69988; /* Your elegant grey */
+  color: white;
+  text-align: center; /* Ensures content inside is centered by default */
+  padding: 3rem 1rem; /* Generous padding */
+  font-family: "Helvetica Neue", sans-serif;
+  box-sizing: border-box; /* Ensures padding doesn't add to element's total width */
+}
+
+.footer-top {
+  display: flex;
+  /* Use justify-content: space-between for spreading, but ensure flex-items have proper flex-basis */
+  justify-content: space-between;
+  align-items: flex-start; /* Aligns content within sections to the top */
+  flex-wrap: wrap; /* Allows sections to wrap to the next line */
+  max-width: 1100px;
+  margin: 0 auto; /* Centers the top content area */
+  gap: 2rem; /* Space between the main sections (links, logo, social) */
+}
+
+/* Common styles for footer sections (links, logo, social) */
+/* We'll refine these for desktop within the media query */
+.footer-links,
+.footer-social {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  /* Removed flex: 1 from here for default desktop behavior */
+  min-width: 180px; /* Minimum width before wrapping */
+  text-align: left; /* Default text alignment for list items */
+}
+
+/* Specific adjustments for the logo section */
+.footer-logo {
+  /* No flex-basis here either for natural sizing */
+  text-align: center; /* Center the logo image */
+  min-width: 100px; /* Ensure it has a minimum presence */
+}
+
+/* This is the key desktop adjustment: */
+/* Apply flex properties directly to the main sections only on desktop */
+@media (min-width: 769px) { /* Apply these styles when screen is wider than 768px (i.e., desktop) */
+    .footer-top {
+        justify-content: space-between; /* Ensures left and right items are pushed to edges */
+        align-items: flex-start; /* Maintain top alignment */
+    }
+
+    .footer-links {
+        flex-basis: 25%; /* Give left section specific width */
+        max-width: 250px; /* Limit its max width */
+    }
+
+    .footer-social {
+        flex-basis: 25%; /* Give right section specific width */
+        max-width: 250px; /* Limit its max width */
+        text-align: right; /* Align social links to the right edge */
+    }
+
+    .footer-social li {
+        justify-content: flex-end; /* Push social icons/text to the right within their container */
+    }
+
+    .footer-logo {
+        flex-grow: 1; /* Allow logo to grow to fill central space */
+        flex-shrink: 1; /* Allow logo to shrink if needed */
+        flex-basis: auto; /* Natural sizing for logo */
+        text-align: center; /* Keep logo centered */
+    }
+}
+
+
+.footer-links li,
+.footer-social li {
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: color 0.2s ease; /* Smooth transition for hover effects */
+}
+
+/* Hover effect for clickable list items */
+.footer-links li:hover,
+.footer-social li:hover,
+.footer-bottom p:not(.divider):hover {
+    color: #f0f0f0; /* Slightly lighter white on hover */
+}
+
+
+.footer-social li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-social li svg {
+    font-size: 1.1em; /* Make icons slightly larger */
+}
+
+
+.footer-logo img {
+  height: 70px;
+  object-fit: contain;
+  max-width: 100%; /* Ensure logo scales down if container gets too small */
+}
+
+.footer-bottom {
+  margin-top: 2rem;
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem; /* Space between copyright and legal links */
+  opacity: 0.8;
+}
+
+.footer-bottom p {
+    cursor: pointer; /* Makes all paragraphs clickable by default */
+}
+/* Override cursor for the divider */
+.footer-bottom .divider {
+    cursor: default;
+}
+
+
+/* --- Responsive Adjustments (Media Queries) --- */
+
+/* Tablet and smaller screens (e.g., max-width 768px) */
+@media (max-width: 768px) {
+  .footer-top {
+    flex-direction: column; /* Stack the sections (links, logo, social) vertically */
+    align-items: center; /* Center items when stacked */
+    gap: 1.5rem; /* Reduce gap between stacked sections */
+  }
+
+  .footer-links,
+  .footer-social {
+    text-align: center; /* Center align text for better appearance when stacked */
+    flex: none; /* Remove flex-grow on these to allow natural width after text-align */
+    width: 100%; /* Take full width of the parent flex container */
+    max-width: 300px; /* Optional: constrain width for very wide screens in column mode */
+  }
+
+  .footer-links li,
+  .footer-social li {
+    margin-bottom: 0.4rem; /* Slightly tighter spacing for list items */
+    font-size: 0.85rem;
+  }
+
+  .footer-logo img {
+    height: 60px; /* Slightly smaller logo on tablets */
+  }
+
+  .footer-bottom {
+    font-size: 0.75rem; /* Smaller font for bottom text */
+    gap: 0.4rem; /* Reduce gap */
+    margin-top: 1.5rem; /* Reduce margin top */
+  }
+
+  /* Hide the vertical dividers on smaller screens when items wrap frequently */
+  .footer-bottom .divider {
+    display: none;
+  }
+}
+
+/* Mobile screens (e.g., max-width 480px) */
+@media (max-width: 480px) {
+  .footer-container {
+    padding: 2rem 0.5rem; /* Even less padding on very small screens */
+  }
+
+  .footer-top {
+    gap: 1rem; /* Further reduce gap between stacked sections */
+  }
+
+  .footer-logo img {
+    height: 50px; /* Even smaller logo on mobile */
+  }
+
+  .footer-links li,
+  .footer-social li {
+    font-size: 0.8rem; /* Smallest font size */
+  }
+
+  .footer-social li {
+      justify-content: center; /* Center social icons and text */
+  }
+
+  .footer-bottom {
+    flex-direction: column; /* Stack bottom links vertically */
+    gap: 0.2rem; /* Very small gap when stacked */
+    text-align: center;
+  }
+}

@@ -1,0 +1,144 @@
+/* src/components/admin/AdminTabEliminar.css */
+
+/* Define a danger color variable if not already global */
+:root {
+  --color-fire-brick: #B22222; /* A strong red for delete actions */
+}
+
+/* --- Main container for the form content (reusing AdminTabCategorias/Editar styles) --- */
+.admin-tab-content {
+  padding: var(--spacing-xl);
+  background-color: var(--card-background);
+  color: var(--navbar-text-color);
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xxl); /* Large gap between sections */
+  border-radius: 4px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+}
+
+/* --- Individual Form Sections (reusing AdminTabCategorias/Editar styles) --- */
+.admin-form-section {
+  background-color: var(--color-baby-powder);
+  padding: var(--spacing-xl);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md); /* Space between selects and button */
+}
+
+/* --- Section Titles (h3) (reusing AdminTabCategorias/Editar styles) --- */
+.admin-form-section-title {
+  font-size: 1.6rem;
+  margin-top: 0;
+  margin-bottom: var(--spacing-md);
+  color: var(--highlight-text-color);
+  border-bottom: 1px solid var(--color-alabaster);
+  padding-bottom: var(--spacing-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- Form Selects (reusing AdminTabCategorias/Editar styles) --- */
+.admin-select {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-alabaster);
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  color: var(--navbar-text-color);
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.admin-select:focus {
+  outline: none;
+  border-color: var(--color-khaki);
+  box-shadow: 0 0 0 3px rgba(var(--color-khaki), 0.2);
+}
+
+/* --- Delete Button --- */
+.admin-delete-button {
+  background-color: var(--color-fire-brick); /* Red for destructive action */
+  color: #fff; /* White text */
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  align-self: flex-start; /* Prevents button from stretching full width */
+  margin-top: var(--spacing-sm); /* Small space above button */
+  letter-spacing: 0.5px;
+}
+
+.admin-delete-button:hover {
+  background-color: #A01B1B; /* Slightly darker red on hover */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.admin-delete-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.admin-delete-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+/* --- Section Separator (reusing AdminTabEditar styles) --- */
+.admin-section-separator {
+  margin: var(--spacing-xxl) 0;
+  height: 1px;
+  background-color: var(--color-alabaster);
+  border: none;
+  width: 100%;
+}
+
+/* --- Responsive Adjustments (reusing AdminTabCategorias/Editar styles) --- */
+@media (max-width: 768px) {
+  .admin-tab-content {
+    padding: var(--spacing-lg);
+    gap: var(--spacing-xl);
+  }
+  .admin-form-section {
+    padding: var(--spacing-lg);
+    gap: var(--spacing-sm);
+  }
+  .admin-form-section-title {
+    font-size: 1.4rem;
+    margin-bottom: var(--spacing-sm);
+  }
+  .admin-select,
+  .admin-delete-button {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-tab-content {
+    padding: var(--spacing-md);
+    gap: var(--spacing-lg);
+  }
+  .admin-form-section {
+    padding: var(--spacing-md);
+  }
+  .admin-form-section-title {
+    font-size: 1.2rem;
+  }
+  .admin-select,
+  .admin-delete-button {
+    font-size: 0.9rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+}

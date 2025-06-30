@@ -1,0 +1,37 @@
+/* src/Privacidad.css */
+
+.privacy-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-alabaster);
+  color: var(--navbar-text-color);
+  font-family: var(--font-body);
+}
+
+.privacy-content {
+  flex: 1;
+  max-width: 700px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: var(--card-background);
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.privacy-content h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--highlight-text-color);
+}
+
+.privacy-content h2 {
+  margin-top: 1.5rem;
+  color: var(--highlight-text-color);
+  font-size: 1.3rem;
+}
+
+.privacy-content ul {
+  margin-left: 1.5rem;
+  list-style-type: disc;
+}

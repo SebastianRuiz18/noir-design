@@ -1,42 +1,153 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* App.css */
+
+/* --- Adobe Fonts Import --- */
+/* IMPORTANT: This @import rule MUST be at the very top of your CSS file,
+   before any other CSS rules, including :root variables. */
+@import url("https://use.typekit.net/aig5bhe.css");
+
+/* Define CSS Variables for fonts, colors, and spacing */
+:root {
+  /* Colors - Adapted to your Capricorn Color Palette */
+  --color-baby-powder: #F8F7F1;
+  --color-alabaster: #E4E0D6;
+  --color-khaki: #A69988;
+  --color-cafe-noir: #4E3606;
+  --color-night: #0E1111;
+
+  /* Semantic Color Mapping for consistency */
+  --navbar-bg-color: var(--color-baby-powder); /* Lightest background */
+  --navbar-text-color: var(--color-cafe-noir); /* Dark brown for main text */
+  --navbar-border-color: var(--color-khaki); /* Medium brown for borders/accents */
+  --hover-color: var(--color-night); /* Very dark for strong hover */
+  --active-link-color: var(--color-khaki); /* Khaki for active/highlighted links */
+  --highlight-text-color: var(--color-cafe-noir); /* Cafe Noir for prominent text (headings, names) */
+  --card-background: #fff; /* Keeping cards pure white for contrast, as seen in product grid */
+  --card-border-color: var(--color-alabaster); /* Very light border for cards */
+
+
+  /* Spacing Variables */
+  --spacing-xs: 5px;
+  --spacing-sm: 10px;
+  --spacing-md: 15px;
+  --spacing-lg: 20px;
+  --spacing-xl: 30px;
+  --spacing-xxl: 50px;
+
+  /* Navbar Specific Variables (can be moved to Navbar.css if desired, but fine here) */
+  --sidebar-width: 250px; /* Assuming this is the full width when open */
+  --closed-sidebar-width: 70px; /* From your .main-content margin-left */
+  --hamburger-size: 30px;
+  --close-btn-size: 30px;
+
+  /* --- Font Variables --- */
+  /* "The Seasons" from Adobe Fonts */
+  --font-title: "the-seasons", serif;
+  --font-title-weight: 300;
+  --font-title-style: normal;
+
+  /* Other fonts */
+  --font-normal-italic: "Times New Roman", serif;
+  --font-body: "Times New Roman", serif;
+  --font-accent: "Montserrat", sans-serif;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* --- Sticky Footer Setup --- */
+/* 1. Ensure HTML and body take full height */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevents horizontal scrollbar */
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+/* 2. Main app container is a flexbox that stretches to full height */
+.app-container {
+  display: flex;
+  min-height: 100vh; /* Ensures the container is at least the full height of the viewport */
+  /* No flex-direction: column here, as Navbar is a sibling of the content wrapper */
+}
+
+/* 3. The main content area *and* footer need to be grouped as a flex column
+      to push the footer down. This will be the `main-content-wrapper` */
+.main-content-wrapper { /* New class for the wrapper around main and footer */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* This is the key: makes this wrapper take all remaining horizontal space */
+  min-width: 0; /* Important for flex items to prevent overflow issues */
+}
+
+
+/* Apply default body font */
+body {
+  font-family: var(--font-body);
+  color: var(--navbar-text-color);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Ensures padding/border are included in element's total width/height */
+  line-height: 1.6;
+  background-color: var(--color-baby-powder);
+}
+
+/* Global resets for list and headings */
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  font-family: var(--font-title);
+  font-weight: var(--font-title-weight);
+  font-style: var(--font-title-style);
+  color: var(--highlight-text-color);
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+/* Main content wrapper to prevent overlap with Navbar */
+/* This is now INSIDE .main-content-wrapper, and should grow */
+.main-content {
+  margin-left: var(--closed-sidebar-width); /* Default margin for closed sidebar */
+  padding: var(--spacing-lg); /* Use spacing variables */
+  transition: margin-left 0.4s ease-in-out;
+  flex-grow: 1; /* This makes the actual page content area push the footer down */
+  box-sizing: border-box; /* Crucial for padding not adding to width/height */
+}
+
+/* Adjust main content when the sidebar is open */
+/* Assuming 'sidenav' is a class on your Navbar component, and 'open' is added when it's open */
+.sidenav.open ~ .main-content {
+  margin-left: var(--sidebar-width); /* Adjust margin for open sidebar */
+}
+
+/* Responsive adjustments for main content */
+@media (max-width: 768px) {
+  /* On smaller screens, the sidebar might disappear or become an overlay.
+     The main-content should likely go full width. */
+  .main-content {
+    margin-left: 0; /* Remove fixed margin for smaller screens */
+    padding: var(--spacing-md);
   }
-  to {
-    transform: rotate(360deg);
+  /* If Navbar becomes an overlay, this selector might not be needed or needs adjustment */
+  .sidenav.open ~ .main-content {
+    /* If the sidebar is an overlay, main content doesn't need margin-left */
+    margin-left: 0;
   }
+
+  /* App.css (or index.css) - Add this */
+body.no-scroll {
+  overflow: hidden;
+  height: 100vh;
+}
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@media (max-width: 480px) {
+  .main-content {
+    padding: var(--spacing-sm);
   }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }

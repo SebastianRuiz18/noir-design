@@ -1,32 +1,60 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
+// ProductPage.jsx
+import { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
-
-// Tipos de corte visuales (recuerda poner las imágenes en /public/shapes)
-const cutShapes = [
-  { name: "Rounded", image: "/shapes/rounded.png" },
-  { name: "Scalloped", image: "/shapes/scalloped.png" },
-  { name: "Square", image: "/shapes/square.png" },
-];
+import Footer from "../components/Footer";
+import "./ProductPage.css";
+import logo from "../assets/logo.png";
 
 function ProductPage() {
   const { subcategory, productId } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
+  const [cutShapes, setCutShapes] = useState([]);
 
+  const [isZooming, setIsZooming] = useState(false);
+  const [zoomStyle, setZoomStyle] = useState({});
+  const imageWrapperRef = useRef(null);
+
+  const zoomLevel = 2.5;
+  const magnifierSize = 180;
+
+  // Obtener producto
   useEffect(() => {
     const fetchProduct = async () => {
-      const ref = doc(db, `products-${subcategory}`, productId);
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        setProduct(snap.data());
-      } else {
-        alert("Producto no encontrado");
+      try {
+        const ref = doc(db, `products-${subcategory}`, productId);
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          setProduct(snap.data());
+        } else {
+          console.warn("Producto no encontrado:", productId);
+          navigate('/');
+        }
+      } catch (error) {
+        console.error("Error al cargar producto:", error);
+        navigate('/');
       }
     };
 
     fetchProduct();
-  }, [subcategory, productId]);
+  }, [subcategory, productId, navigate]);
+
+  // Obtener tipos de corte desde Firebase
+  useEffect(() => {
+    const fetchCutShapes = async () => {
+      try {
+        const snap = await getDocs(collection(db, "cortes"));
+        const data = snap.docs.map(doc => doc.data());
+        setCutShapes(data);
+      } catch (error) {
+        console.error("Error al obtener tipos de corte:", error);
+      }
+    };
+
+    fetchCutShapes();
+  }, []);
 
   const handleCopyLink = () => {
     const url = window.location.href;
@@ -34,98 +62,94 @@ function ProductPage() {
     alert("Enlace copiado al portapapeles ✅");
   };
 
-  if (!product) return <p style={{ padding: "2rem", fontSize: "1.2rem", color: "#333" }}>Cargando producto...</p>;
+  const handleMouseMove = (e) => {
+    if (!imageWrapperRef.current || !product?.image) return;
+
+    const { left, top, width, height } = imageWrapperRef.current.getBoundingClientRect();
+    const x = e.clientX - left;
+    const y = e.clientY - top;
+
+    const magnifierLeft = x - magnifierSize / 2;
+    const magnifierTop = y - magnifierSize / 2;
+
+    const bgXPercent = (x / width) * 100;
+    const bgYPercent = (y / height) * 100;
+
+    setZoomStyle({
+      backgroundImage: `url(${product.image})`,
+      backgroundPosition: `${bgXPercent}% ${bgYPercent}%`,
+      backgroundSize: `${width * zoomLevel}px ${height * zoomLevel}px`,
+      left: `${magnifierLeft}px`,
+      top: `${magnifierTop}px`,
+      width: `${magnifierSize}px`,
+      height: `${magnifierSize}px`,
+    });
+
+    setIsZooming(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsZooming(false);
+  };
+
+  if (!product) {
+    return (
+      <div className="product-page-container loading-state">
+        <p>Cargando producto...</p>
+      </div>
+    );
+  }
 
   return (
-    <div style={{
-      backgroundColor: "#f9f9f9",
-      minHeight: "100vh",
-      padding: "2rem",
-      fontFamily: "sans-serif",
-      color: "#222"
-    }}>
-      <div style={{
-        maxWidth: "1000px",
-        margin: "0 auto",
-        backgroundColor: "#fff",
-        padding: "2rem",
-        borderRadius: "12px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
-      }}>
-        <button
-          onClick={() => window.history.back()}
-          style={{
-            marginBottom: "1rem",
-            backgroundColor: "#1a73e8",
-            color: "white",
-            padding: "0.5rem 1rem",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer"
-          }}
-        >
+    <div className="product-page-container">
+      <div className="product-detail-card">
+        <div className="product-page-logo-container" onClick={() => navigate('/')}>
+          <img src={logo} alt="Noir.Design Logo" className="product-page-logo" />
+        </div>
+
+        <button onClick={() => window.history.back()} className="back-button">
           ⬅ Volver
         </button>
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
-          <img
-            src={product.image}
-            alt={product.name}
-            style={{
-              width: "100%",
-              maxWidth: "400px",
-              objectFit: "contain",
-              border: "1px solid #ccc",
-              borderRadius: "8px"
-            }}
-          />
+        <div className="product-content">
+          <div
+            className="product-image-wrapper"
+            ref={imageWrapperRef}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+          >
+            <img
+              src={product.image}
+              alt={product.name}
+              className="product-image-display"
+            />
+            {isZooming && <div className="magnifying-glass" style={zoomStyle}></div>}
+          </div>
 
-          <div style={{ flex: 1 }}>
-            <h1 style={{ marginBottom: "0.5rem", fontSize: "2rem" }}>{product.name}</h1>
-            <p style={{ marginBottom: "1rem", fontSize: "1.1rem", lineHeight: "1.5" }}>{product.description}</p>
-            <p style={{ marginBottom: "1rem", fontStyle: "italic", color: "#555" }}>Medidas: {product.measures}</p>
-
-            <button
-              onClick={handleCopyLink}
-              style={{
-                backgroundColor: "#28a745",
-                color: "white",
-                padding: "0.6rem 1.2rem",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-                fontSize: "1rem"
-              }}
-            >
-              📋 Copiar enlace del producto
+          <div className="product-info-section">
+            <h1>{product.name}</h1>
+            <p className="description">{product.description}</p>
+            <p className="measures">Medidas: {product.measures}</p>
+            <button onClick={handleCopyLink} className="copy-link-button">
+              Copiar enlace del producto
             </button>
           </div>
         </div>
 
-        {/* Tipos de Corte */}
-        <div style={{ marginTop: "3rem" }}>
-          <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>Tipos de corte disponibles</h2>
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+        {/* Tipos de corte desde Firebase */}
+        <div className="cut-shapes-section">
+          <h2>Tipos de corte disponibles</h2>
+          <div className="cut-shapes-grid">
             {cutShapes.map((cut) => (
-              <div key={cut.name} style={{ textAlign: "center", width: "120px" }}>
-                <img
-                  src={cut.image}
-                  alt={cut.name}
-                  style={{
-                    width: "100%",
-                    height: "120px",
-                    objectFit: "contain",
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    backgroundColor: "#fafafa"
-                  }}
-                />
-                <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "#333" }}>{cut.name}</p>
+              <div key={cut.name} className="cut-shape-item">
+                <img src={cut.image} alt={cut.name} />
+                <p>{cut.name}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

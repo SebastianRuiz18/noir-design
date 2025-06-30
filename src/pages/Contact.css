@@ -1,0 +1,160 @@
+/* src/Contact.css */
+
+/* --- Overall Page Container --- */
+/* src/Contact.css */
+
+.contact-page-container {
+  display: flex;
+  flex-direction: column; /* Importante para apilar contenido + footer */
+  min-height: 100vh;
+  background-color: var(--color-alabaster);
+  font-family: var(--font-body);
+  color: var(--navbar-text-color);
+}
+
+.contact-main-content {
+  flex: 1; /* Esto empuja el footer al fondo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xxl);
+}
+
+
+/* --- Contact Form Card (the white panel containing the form) --- */
+.contact-form-card {
+  max-width: 600px; /* Max width for the form container */
+  width: 100%; /* Ensure it fills available width up to max-width */
+  background-color: var(--card-background); /* White background for the form panel */
+  padding: var(--spacing-xl);
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Soft shadow for depth */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md); /* Space between form groups */
+}
+
+/* --- Form Title (h2) --- */
+.contact-title {
+  font-family: var(--font-heading); /* Assuming you have a serif font variable */
+  font-size: 2rem;
+  color: var(--highlight-text-color);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* --- Form Group (for input/label spacing) --- */
+.form-group {
+  margin-bottom: var(--spacing-sm); /* Space between form fields */
+}
+
+.form-group label {
+  display: block; /* Make labels take full width */
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-cafe-noir);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+
+/* --- Form Inputs (input, textarea, select) --- */
+.contact-input,
+.contact-textarea,
+.contact-select {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-alabaster); /* Light border */
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  color: var(--navbar-text-color);
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.contact-input::placeholder,
+.contact-textarea::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.contact-input:focus,
+.contact-textarea:focus,
+.contact-select:focus {
+  outline: none;
+  border-color: var(--color-khaki); /* Highlight on focus */
+  box-shadow: 0 0 0 3px rgba(var(--color-khaki), 0.2);
+}
+
+.contact-textarea {
+  min-height: 100px; /* Make textarea larger */
+  resize: vertical; /* Allow vertical resizing */
+}
+
+/* --- Submit Button --- */
+.contact-submit-button {
+  background-color: var(--color-khaki); /* Main brand color for the button */
+  color: #fff;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: var(--spacing-lg); /* Space above the button */
+  letter-spacing: 0.5px;
+  width: 100%; /* Make button full width */
+}
+
+.contact-submit-button:hover {
+  background-color: var(--color-cafe-noir); /* Darker on hover */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.contact-submit-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  .contact-main-content {
+    padding: var(--spacing-lg);
+  }
+  .contact-form-card {
+    padding: var(--spacing-lg);
+  }
+  .contact-title {
+    font-size: 1.6rem;
+    margin-bottom: var(--spacing-md);
+  }
+  .contact-input,
+  .contact-textarea,
+  .contact-select,
+  .contact-submit-button {
+    font-size: 0.95rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-main-content {
+    padding: var(--spacing-md);
+  }
+  .contact-form-card {
+    padding: var(--spacing-md);
+    border-radius: 0; /* Remove border-radius on very small screens for full width */
+    box-shadow: none; /* Remove shadow on very small screens */
+  }
+  .contact-title {
+    font-size: 1.4rem;
+  }
+  .contact-submit-button {
+    font-size: 1rem;
+  }
+}

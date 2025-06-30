@@ -1,22 +1,40 @@
-import React, { useState } from 'react';
-import useCatalogFromFirebase from './hooks/useCatalogFromFirebase';
-import Navbar from './components/Navbar';
-import DynamicProductGrid from './components/DynamicProductGrid';
-import Login from './components/Login';
-import AdminPanel from './components/Adminpanel';
-import { signOut } from 'firebase/auth';
-import { auth } from './firebase';
+// src/Admin.jsx
+import React, { useState, useEffect } from "react";
+import useCatalogFromFirebase from "./hooks/useCatalogFromFirebase";
+import Navbar from "./components/Navbar";
+import DynamicProductGrid from "./components/DynamicProductGrid";
+import Login from "./components/Login";
+import AdminPanel from "./components/Adminpanel";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase";
+
+import "./Admin.css"; // <--- Import the new CSS file
 
 function Admin() {
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [activeTab, setActiveTab] = useState("crear");
   const catalog = useCatalogFromFirebase();
+
+  // Listen for authentication state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        setIsAdmin(currentUser.email === "seruci93@gmail.com"); // Your admin email
+      } else {
+        setIsAdmin(false);
+      }
+    });
+    return () => unsubscribe(); // Cleanup subscription on unmount
+  }, []); // Run once on component mount
 
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
-        window.location.href = '/';
+        // Redirect to home or login page after logout
+        window.location.href = "/";
       })
       .catch((error) => {
         console.error("Error al cerrar sesión", error);
@@ -24,58 +42,86 @@ function Admin() {
   };
 
   if (!user) {
-    return <Login onLogin={(u) => {
-      setUser(u);
-      setIsAdmin(u.email === "seruci93@gmail.com");
-    }} />;
+    return (
+      <Login
+        onLogin={(u) => {
+          setUser(u);
+          setIsAdmin(u.email === "seruci93@gmail.com");
+        }}
+      />
+    );
   }
 
   if (!isAdmin) {
     return (
-      <div style={{ padding: "2rem", textAlign: "center" }}>
-        <h2>No tienes permiso para ver esta sección 🔒</h2>
-        <p>Por favor, cierra sesión y usa el correo autorizado.</p>
+      <div className="admin-access-denied"> {/* <--- Added class name */}
+        <h2 className="admin-denied-heading">No tienes permiso para ver esta sección 🔒</h2> {/* <--- Added class name */}
+        <p className="admin-denied-message">Por favor, cierra sesión y usa el correo autorizado.</p> {/* <--- Added class name */}
       </div>
     );
   }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div className="admin-page-container"> {/* <--- Added class name */}
+      {/* Assuming Navbar acts as a sidebar, and already has its own styling */}
       <Navbar catalog={catalog} onSelectSubcategory={setSelectedSubcategory} />
-      <main style={{ flex: 1 }}>
-        <div style={{
-          padding: "1rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center"
-        }}>
-          <h2>
-            {selectedSubcategory ? selectedSubcategory.name : "Selecciona una subcategoría del menú"}
+      
+      <main className="admin-main-content"> {/* <--- Added class name */}
+        <div className="admin-header"> {/* <--- Added class name */}
+          <h2 className="admin-header-title"> {/* <--- Added class name */}
+            {selectedSubcategory
+              ? `${selectedSubcategory.name}`
+              : activeTab === "crear"
+              ? "Agregar"
+              : activeTab === "editar"
+              ? "Editar"
+              : "Eliminar"}
           </h2>
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <span style={{ fontSize: "0.9rem", color: "#666" }}>{user.displayName}</span>
+
+          <div className="admin-user-info"> {/* <--- Added class name */}
+            <span className="admin-username"> {/* <--- Added class name */}
+              {user.displayName || user.email}
+            </span>
             <button
               onClick={handleLogout}
-              style={{
-                background: "#f44336",
-                color: "#fff",
-                padding: "6px 10px",
-                fontSize: "0.9rem",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer"
-              }}
+              className="admin-logout-button" // <--- Already fixed, no inline comment needed here
             >
               Cerrar sesión
             </button>
           </div>
         </div>
 
+        {/* Botones de pestañas */}
+        <div className="admin-tab-buttons-container"> {/* <--- Added class name */}
+          <button
+            className={`admin-tab-button ${activeTab === "crear" ? "active" : ""}`}
+            onClick={() => setActiveTab("crear")}
+          >
+            ➕ Agregar
+          </button>
+          <button
+            className={`admin-tab-button ${activeTab === "editar" ? "active" : ""}`}
+            onClick={() => setActiveTab("editar")}
+          >
+            ✏️ Editar
+          </button>
+          <button
+            className={`admin-tab-button ${activeTab === "eliminar" ? "active" : ""}`}
+            onClick={() => setActiveTab("eliminar")}
+          >
+            🗑️ Eliminar
+          </button>
+        </div>
+
         {selectedSubcategory && (
-          <DynamicProductGrid subcategoryId={selectedSubcategory.id} isAdmin={true} />
+          <DynamicProductGrid
+            subcategoryId={selectedSubcategory.id}
+            isAdmin={true}
+          />
         )}
 
-        <AdminPanel catalog={catalog} />
+        {/* Here, we pass the active tab to the AdminPanel */}
+        <AdminPanel catalog={catalog} activeTab={activeTab} />
       </main>
     </div>
   );

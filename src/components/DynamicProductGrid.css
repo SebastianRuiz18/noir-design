@@ -1,0 +1,302 @@
+/* DynamicProductGrid.css */
+
+/* --- CSS Variables (Rely on global definitions from App.css) --- */
+/* No need for :root here if App.css is defining them globally */
+
+
+/* --- Wrapper for Subcategory Title and Grid --- */
+.product-grid-container {
+  padding: var(--spacing-lg);
+  max-width: 1200px;
+  margin: var(--spacing-xl) auto;
+  text-align: center;
+}
+
+/* --- Subcategory Title Styling --- */
+.subcategory-title {
+  font-family: var(--font-title);
+  font-size: 2.5rem;
+  color: var(--highlight-text-color);
+  margin-bottom: var(--spacing-xxl);
+  text-align: center;
+  font-weight: var(--font-title-weight);
+  font-style: var(--font-title-style);
+  letter-spacing: 1px;
+}
+
+/* --- Product Grid Container --- */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-xl);
+  padding: 0;
+  margin: 0 auto;
+}
+
+/* --- Individual Product Card --- */
+.product-card {
+  background-color: var(--card-background);
+  border: 1px solid var(--card-border-color);
+  border-radius: 4px;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  transition: border-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.product-card:hover {
+  border-color: var(--navbar-border-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Product Image Container (Ensures square aspect ratio) --- */
+.product-image-container {
+  width: 100%;
+  padding-bottom: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  background-color: var(--color-baby-powder);
+}
+
+.product-image-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  transition: transform 0.3s ease-in-out;
+}
+
+.product-card:hover .product-image-container img {
+  transform: scale(1.08);
+}
+
+/* --- Product Information (Name, Measures, Description) --- */
+.product-info {
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: center;
+}
+
+.product-name {
+  font-family: var(--font-title);
+  font-size: 1.4rem;
+  font-weight: var(--font-title-weight);
+  font-style: var(--font-title-style);
+  color: var(--highlight-text-color);
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.2;
+}
+
+.product-measures {
+  font-family: var(--font-normal-italic);
+  font-size: 1.05rem;
+  color: var(--navbar-text-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.product-description {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--navbar-text-color);
+  line-height: 1.6;
+  flex-grow: 1;
+  margin-bottom: var(--spacing-md);
+  text-align: left;
+  padding: 0 var(--spacing-sm);
+}
+
+/* --- Admin Buttons (Appear on Hover) --- */
+.product-buttons {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding: 0 var(--spacing-lg);
+  margin-top: auto;
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+  transition: max-height 0.4s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
+}
+
+.product-card:hover .product-buttons {
+  max-height: 100px;
+  opacity: 1;
+  padding-top: var(--spacing-md);
+  padding-bottom: var(--spacing-lg);
+}
+
+.product-buttons button {
+  font-family: var(--font-accent);
+  background-color: var(--navbar-border-color);
+  color: #fff;
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.1s ease-in-out;
+  min-width: fit-content;
+}
+
+.product-buttons button:hover {
+  background-color: var(--highlight-text-color);
+  transform: translateY(-1px);
+}
+
+.product-buttons button:disabled {
+  background-color: var(--card-border-color);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* --- Admin Edit Form (within card) --- */
+.product-edit-form {
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  height: 100%;
+  justify-content: space-between;
+}
+
+.product-edit-form input,
+.product-edit-form textarea {
+  font-family: var(--font-body);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--navbar-border-color);
+  border-radius: 5px;
+  font-size: 1rem;
+  color: var(--navbar-text-color);
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--card-background);
+}
+
+.product-edit-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.product-edit-form button {
+  font-family: var(--font-accent);
+  background-color: var(--color-khaki);
+  color: white;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  flex-grow: 1;
+  font-weight: 500;
+}
+
+.product-edit-form button:hover {
+  background-color: var(--color-cafe-noir);
+}
+
+.product-edit-form button:last-child {
+  background-color: var(--color-alabaster);
+  color: var(--color-cafe-noir);
+  margin-top: var(--spacing-sm);
+}
+
+.product-edit-form button:last-child:hover {
+  background-color: var(--color-khaki);
+  color: #fff;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+  }
+  .subcategory-title {
+    font-size: 2.2rem;
+    margin-bottom: var(--spacing-xl);
+  }
+  .product-info {
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm);
+  }
+  .product-name {
+    font-size: 1.3rem;
+  }
+  .product-measures {
+    font-size: 1rem;
+  }
+  .product-description {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-grid-container {
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) auto;
+  }
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--spacing-md);
+  }
+  .subcategory-title {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-lg);
+  }
+  .product-name {
+    font-size: 1.2rem;
+  }
+  .product-measures {
+    font-size: 0.95rem;
+  }
+  .product-buttons {
+    padding: 0 var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+  }
+  .product-card:hover .product-buttons {
+    padding-top: var(--spacing-sm);
+    padding-bottom: var(--spacing-md);
+  }
+  .product-buttons button {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid-container {
+    padding: var(--spacing-sm);
+    margin: var(--spacing-md) auto;
+  }
+  .product-grid {
+    grid-template-columns: 1fr; /* Single column on very small screens */
+    gap: var(--spacing-md);
+  }
+  .subcategory-title {
+    font-size: 1.8rem;
+    margin-bottom: var(--spacing-md);
+  }
+  .product-name {
+    font-size: 1.1rem;
+  }
+  .product-measures {
+    font-size: 0.9rem;
+  }
+  .product-description {
+    font-size: 0.85rem;
+  }
+}

@@ -1,0 +1,207 @@
+/* src/components/admin/AdminTabEditar.css */
+
+/* --- Main container for the form content (reusing AdminTabCategorias styles) --- */
+.admin-tab-content {
+  padding: var(--spacing-xl);
+  background-color: var(--card-background);
+  color: var(--navbar-text-color);
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xxl);
+  border-radius: 4px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+}
+
+/* --- Individual Form Sections (reusing AdminTabCategorias styles) --- */
+.admin-form-section {
+  background-color: var(--color-baby-powder);
+  padding: var(--spacing-xl);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md); /* Space between inputs/elements within a section */
+}
+
+/* --- Section Titles (h3) (reusing AdminTabCategorias styles) --- */
+.admin-form-section-title {
+  font-size: 1.6rem;
+  margin-top: 0;
+  margin-bottom: var(--spacing-md);
+  color: var(--highlight-text-color);
+  border-bottom: 1px solid var(--color-alabaster);
+  padding-bottom: var(--spacing-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- Form Inputs (input, select, textarea) (reusing AdminTabCategorias styles) --- */
+.admin-input,
+.admin-select,
+.admin-textarea {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-alabaster);
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  color: var(--navbar-text-color);
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.admin-input::placeholder,
+.admin-textarea::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.admin-input:focus,
+.admin-select:focus,
+.admin-textarea:focus {
+  outline: none;
+  border-color: var(--color-khaki);
+  box-shadow: 0 0 0 3px rgba(var(--color-khaki), 0.2);
+}
+
+.admin-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* --- Update Button (similar to add button) --- */
+.admin-update-button {
+  background-color: var(--color-khaki); /* Main button color */
+  color: #fff; /* White text */
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  align-self: flex-start; /* Prevents button from stretching full width */
+  margin-top: var(--spacing-sm);
+  letter-spacing: 0.5px;
+}
+
+.admin-update-button:hover {
+  background-color: var(--color-cafe-noir); /* Darker brown on hover */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.admin-update-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* --- Section Separator (replaces <hr>) --- */
+.admin-section-separator {
+  margin: var(--spacing-xxl) 0; /* Space above and below separator */
+  height: 1px; /* Thin line */
+  background-color: var(--color-alabaster); /* Subtle color for the line */
+  border: none; /* Ensure no default hr border */
+  width: 100%; /* Full width */
+}
+
+/* --- Image Preview Section (reusing AdminTabCategorias styles) --- */
+.admin-image-preview {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: var(--color-alabaster);
+  border-radius: 4px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  max-width: 300px;
+  align-self: center;
+}
+
+.admin-preview-title {
+  font-size: 1.1rem;
+  margin-top: 0;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-cafe-noir);
+}
+
+.admin-preview-image {
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  border: 1px solid var(--color-alabaster);
+  background-color: #fff;
+}
+
+.admin-preview-text {
+  font-size: 0.95rem;
+  color: var(--navbar-text-color);
+  margin: 0;
+  word-break: break-word;
+  text-align: center;
+}
+
+/* --- Responsive Adjustments (reusing AdminTabCategorias styles) --- */
+@media (max-width: 768px) {
+  .admin-tab-content {
+    padding: var(--spacing-lg);
+    gap: var(--spacing-xl);
+  }
+  .admin-form-section {
+    padding: var(--spacing-lg);
+    gap: var(--spacing-sm);
+  }
+  .admin-form-section-title {
+    font-size: 1.4rem;
+    margin-bottom: var(--spacing-sm);
+  }
+  .admin-input,
+  .admin-select,
+  .admin-textarea,
+  .admin-update-button {
+    font-size: 0.95rem;
+  }
+  .admin-image-preview {
+    padding: var(--spacing-sm);
+  }
+  .admin-preview-title {
+    font-size: 1rem;
+  }
+  .admin-preview-image {
+    width: 100px;
+  }
+  .admin-preview-text {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-tab-content {
+    padding: var(--spacing-md);
+    gap: var(--spacing-lg);
+  }
+  .admin-form-section {
+    padding: var(--spacing-md);
+  }
+  .admin-form-section-title {
+    font-size: 1.2rem;
+  }
+  .admin-input,
+  .admin-select,
+  .admin-textarea,
+  .admin-update-button {
+    font-size: 0.9rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  .admin-image-preview {
+    padding: var(--spacing-xs);
+  }
+  .admin-preview-image {
+    width: 80px;
+  }
+}

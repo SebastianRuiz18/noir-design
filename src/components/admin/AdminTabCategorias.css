@@ -1,0 +1,198 @@
+/* src/components/admin/AdminTabCategorias.css */
+
+/* --- Main container for the form content --- */
+.admin-tab-content {
+  padding: var(--spacing-xl); /* Generous padding around the entire form */
+  background-color: var(--card-background); /* White background for the content area */
+  color: var(--navbar-text-color); /* Default text color */
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column; /* Stack sections vertically */
+  gap: var(--spacing-xxl); /* Large gap between different sections */
+  border-radius: 4px; /* Match panel's border radius */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03); /* Light overall shadow */
+}
+
+/* --- Individual Form Sections (Category, Subcategory, Product, Cut Shape) --- */
+.admin-form-section {
+  background-color: var(--color-baby-powder); /* Lighter off-white for each section background */
+  padding: var(--spacing-xl); /* Padding inside each section */
+  border-radius: 6px; /* Slightly more rounded than container for distinction */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow for each section */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md); /* Space between inputs/elements within a section */
+}
+
+/* --- Section Titles (h3) --- */
+.admin-form-section-title {
+  font-size: 1.6rem; /* Size for section titles */
+  margin-top: 0; /* Remove default top margin */
+  margin-bottom: var(--spacing-md); /* Space below title */
+  color: var(--highlight-text-color); /* Dark brown for emphasis */
+  border-bottom: 1px solid var(--color-alabaster); /* Subtle separator */
+  padding-bottom: var(--spacing-sm); /* Padding above the separator */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- Form Inputs (input, select, textarea) --- */
+.admin-input,
+.admin-select,
+.admin-textarea {
+  width: 100%; /* Full width within its container */
+  padding: var(--spacing-sm); /* Standard padding */
+  border: 1px solid var(--color-alabaster); /* Light border */
+  border-radius: 4px; /* Subtle rounding */
+  font-size: 1rem;
+  font-family: var(--font-body);
+  color: var(--navbar-text-color);
+  background-color: #fff; /* White background for input fields */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.admin-input::placeholder,
+.admin-textarea::placeholder {
+  color: #999; /* Lighter placeholder text */
+  font-style: italic;
+}
+
+.admin-input:focus,
+.admin-select:focus,
+.admin-textarea:focus {
+  outline: none; /* Remove default outline */
+  border-color: var(--color-khaki); /* Highlight border on focus */
+  box-shadow: 0 0 0 3px rgba(var(--color-khaki), 0.2); /* Soft focus shadow */
+}
+
+.admin-textarea {
+  min-height: 80px; /* Minimum height for text areas */
+  resize: vertical; /* Allow vertical resizing only */
+}
+
+/* --- Add Button --- */
+.admin-add-button {
+  background-color: var(--color-khaki); /* Main button color */
+  color: #fff; /* White text */
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-body); /* Consistent font */
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  align-self: flex-start; /* Prevents button from stretching full width */
+  margin-top: var(--spacing-sm); /* Small space above button */
+  letter-spacing: 0.5px;
+}
+
+.admin-add-button:hover {
+  background-color: var(--color-cafe-noir); /* Darker brown on hover */
+  transform: translateY(-1px); /* Subtle lift */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.admin-add-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* --- Image Preview Section --- */
+.admin-image-preview {
+  margin-top: var(--spacing-lg); /* Space above the preview */
+  padding: var(--spacing-md);
+  background-color: var(--color-alabaster); /* Slightly darker background for preview */
+  border-radius: 4px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs); /* Small gap between preview elements */
+  max-width: 300px; /* Constrain preview width */
+  align-self: center; /* Center the preview section */
+}
+
+.admin-preview-title {
+  font-size: 1.1rem;
+  margin-top: 0;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-cafe-noir);
+}
+
+.admin-preview-image {
+  width: 120px; /* Fixed width as in original inline style */
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  border: 1px solid var(--color-alabaster);
+  background-color: #fff; /* White background behind image */
+}
+
+.admin-preview-text {
+  font-size: 0.95rem;
+  color: var(--navbar-text-color);
+  margin: 0; /* Remove default paragraph margins */
+  word-break: break-word; /* Prevent long words from overflowing */
+  text-align: center;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  .admin-tab-content {
+    padding: var(--spacing-lg);
+    gap: var(--spacing-xl);
+  }
+  .admin-form-section {
+    padding: var(--spacing-lg);
+    gap: var(--spacing-sm);
+  }
+  .admin-form-section-title {
+    font-size: 1.4rem;
+    margin-bottom: var(--spacing-sm);
+  }
+  .admin-input,
+  .admin-select,
+  .admin-textarea,
+  .admin-add-button {
+    font-size: 0.95rem;
+  }
+  .admin-image-preview {
+    padding: var(--spacing-sm);
+  }
+  .admin-preview-title {
+    font-size: 1rem;
+  }
+  .admin-preview-image {
+    width: 100px;
+  }
+  .admin-preview-text {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-tab-content {
+    padding: var(--spacing-md);
+    gap: var(--spacing-lg);
+  }
+  .admin-form-section {
+    padding: var(--spacing-md);
+  }
+  .admin-form-section-title {
+    font-size: 1.2rem;
+  }
+  .admin-input,
+  .admin-select,
+  .admin-textarea,
+  .admin-add-button {
+    font-size: 0.9rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  .admin-image-preview {
+    padding: var(--spacing-xs);
+  }
+  .admin-preview-image {
+    width: 80px;
+  }
+}

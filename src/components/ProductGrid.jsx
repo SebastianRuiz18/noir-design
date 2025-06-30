@@ -1,3 +1,5 @@
+import "./ProductGrid.css"; // Import the CSS file for styling
+
 function ProductGrid({ products }) {
     if (!products || products.length === 0) {
       return <p style={{ padding: "1rem" }}>No hay productos en esta subcategoría.</p>;

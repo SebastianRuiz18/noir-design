@@ -1,26 +1,32 @@
-import { useState } from 'react';
-import useCatalogFromFirebase from './hooks/useCatalogFromFirebase';
-import Navbar from './components/Navbar';
-import DynamicProductGrid from './components/DynamicProductGrid';
+// App.jsx
+import { useParams } from "react-router-dom";
+import useCatalogFromFirebase from "./hooks/useCatalogFromFirebase";
+import Navbar from "./components/Navbar";
+import DynamicProductGrid from "./components/DynamicProductGrid";
+import Footer from "./components/Footer";
+import TiktokWidget from "./components/Tiktokwidget";
+import "./App.css";
 
 function App() {
-  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const catalog = useCatalogFromFirebase();
+  const { categoryId, subcategoryId } = useParams();
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      <Navbar catalog={catalog} onSelectSubcategory={setSelectedSubcategory} />
-      <main style={{ flex: 1 }}>
-        <div style={{ padding: "1rem" }}>
-          <h2>
-            {selectedSubcategory ? selectedSubcategory.name : "Selecciona una subcategoría del menú"}
-          </h2>
-        </div>
+    <div className="app-container"> {/* This remains the main flex container */}
+      <Navbar catalog={catalog} currentSubcategoryId={subcategoryId} />
 
-        {selectedSubcategory && (
-          <DynamicProductGrid subcategoryId={selectedSubcategory.id} isAdmin={false} />
-        )}
-      </main>
+      {/* This is the new wrapper for main content and footer */}
+      <div className="main-content-wrapper">
+        <main className="main-content">
+          <DynamicProductGrid
+            subcategoryId={subcategoryId}
+            isAdmin={false}
+            catalog={catalog}
+          />
+        </main>
+        <TiktokWidget />
+        <Footer />
+      </div>
     </div>
   );
 }

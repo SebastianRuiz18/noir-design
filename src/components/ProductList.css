@@ -1,0 +1,66 @@
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Hacer que las columnas se ajusten automáticamente */
+  gap: 20px; /* Espacio entre los productos */
+  padding: 1rem;
+  margin-top: 20px; /* Espacio desde la parte superior */
+}
+
+.product-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff; /* Fondo blanco para las tarjetas */
+}
+
+.product-card:hover {
+  transform: translateY(-5px); /* Efecto hover para que el producto se levante un poco */
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15); /* Más sombra al hacer hover */
+}
+
+.product-image-container img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px; /* Bordes redondeados para las imágenes */
+}
+
+.product-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #333;
+}
+
+.product-measures,
+.product-description {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+.product-buttons {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.product-buttons button {
+  background-color: #2d72d9;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.product-buttons button:hover {
+  background-color: #1a58b6;
+}
+
+.product-buttons button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

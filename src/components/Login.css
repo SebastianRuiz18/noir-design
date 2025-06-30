@@ -1,0 +1,38 @@
+/* src/components/Login.css */
+.login-container {
+    background-color: #E4E0D6; /* Tu color bonito */
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centrar vertical */
+    align-items: center;     /* Centrar horizontal */
+    font-family: "Times New Roman", Times, serif;
+    font-style: italic;
+    color: #4E3606;
+  }
+
+  h2{
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .login-button {
+    background-color: #4E3606; /* O el color que quieras */
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-family: sans-serif;
+    font-style: normal;
+    font-weight: 300;
+  }
+  
+  .login-button:hover {
+    background-color: #897b69;
+  }
+  
