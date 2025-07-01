@@ -1,130 +1,47 @@
-// src/Admin.jsx
-import React, { useState, useEffect } from "react";
-import useCatalogFromFirebase from "./hooks/useCatalogFromFirebase";
-import Navbar from "./components/Navbar";
-import DynamicProductGrid from "./components/DynamicProductGrid";
-import Login from "./components/Login";
-import AdminPanel from "./components/Adminpanel";
-import { signOut, onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase";
-
-import "./Admin.css"; // <--- Import the new CSS file
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from './firebase';
+import AdminPanel from './components/Adminpanel';
+import Login from './components/Login';
+import Footer from './components/Footer';
+import Navbar from './components/Navbar';
+import useCatalogFromFirebase from './hooks/useCatalogFromFirebase';
+import logo from './assets/logo.png';
+import './Admin.css';
 
 function Admin() {
-  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
-  const [user, setUser] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [activeTab, setActiveTab] = useState("crear");
-  const catalog = useCatalogFromFirebase();
+  const [user, loading, error] = useAuthState(auth);
+  
+  // THE FIX: Correctly destructure the 'catalog' array from the hook's return object.
+  const { catalog, loading: catalogLoading, error: catalogError } = useCatalogFromFirebase();
 
-  // Listen for authentication state changes
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        setIsAdmin(currentUser.email === "seruci93@gmail.com"); // Your admin email
-      } else {
-        setIsAdmin(false);
-      }
-    });
-    return () => unsubscribe(); // Cleanup subscription on unmount
-  }, []); // Run once on component mount
-
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        // Redirect to home or login page after logout
-        window.location.href = "/";
-      })
-      .catch((error) => {
-        console.error("Error al cerrar sesión", error);
-      });
-  };
-
-  if (!user) {
+  if (loading || catalogLoading) {
     return (
-      <Login
-        onLogin={(u) => {
-          setUser(u);
-          setIsAdmin(u.email === "seruci93@gmail.com");
-        }}
-      />
-    );
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="admin-access-denied"> {/* <--- Added class name */}
-        <h2 className="admin-denied-heading">No tienes permiso para ver esta sección 🔒</h2> {/* <--- Added class name */}
-        <p className="admin-denied-message">Por favor, cierra sesión y usa el correo autorizado.</p> {/* <--- Added class name */}
+      <div className="status-page">
+        <p>Cargando...</p>
       </div>
     );
   }
 
-  return (
-    <div className="admin-page-container"> {/* <--- Added class name */}
-      {/* Assuming Navbar acts as a sidebar, and already has its own styling */}
-      <Navbar catalog={catalog} onSelectSubcategory={setSelectedSubcategory} />
-      
-      <main className="admin-main-content"> {/* <--- Added class name */}
-        <div className="admin-header"> {/* <--- Added class name */}
-          <h2 className="admin-header-title"> {/* <--- Added class name */}
-            {selectedSubcategory
-              ? `${selectedSubcategory.name}`
-              : activeTab === "crear"
-              ? "Agregar"
-              : activeTab === "editar"
-              ? "Editar"
-              : "Eliminar"}
-          </h2>
+  if (error || catalogError) {
+    return (
+      <div className="status-page">
+        <p>Error: {error?.message || catalogError?.message}</p>
+      </div>
+    );
+  }
 
-          <div className="admin-user-info"> {/* <--- Added class name */}
-            <span className="admin-username"> {/* <--- Added class name */}
-              {user.displayName || user.email}
-            </span>
-            <button
-              onClick={handleLogout}
-              className="admin-logout-button" // <--- Already fixed, no inline comment needed here
-            >
-              Cerrar sesión
-            </button>
-          </div>
-        </div>
+  if (user) {
+    return (
+      <div className="admin-page">
+        {/* Now we pass the correct catalog array to the Navbar */}
+        <Navbar catalog={catalog} logo={logo} />
+        <AdminPanel user={user} />
+        <Footer />
+      </div>
+    );
+  }
 
-        {/* Botones de pestañas */}
-        <div className="admin-tab-buttons-container"> {/* <--- Added class name */}
-          <button
-            className={`admin-tab-button ${activeTab === "crear" ? "active" : ""}`}
-            onClick={() => setActiveTab("crear")}
-          >
-            ➕ Agregar
-          </button>
-          <button
-            className={`admin-tab-button ${activeTab === "editar" ? "active" : ""}`}
-            onClick={() => setActiveTab("editar")}
-          >
-            ✏️ Editar
-          </button>
-          <button
-            className={`admin-tab-button ${activeTab === "eliminar" ? "active" : ""}`}
-            onClick={() => setActiveTab("eliminar")}
-          >
-            🗑️ Eliminar
-          </button>
-        </div>
-
-        {selectedSubcategory && (
-          <DynamicProductGrid
-            subcategoryId={selectedSubcategory.id}
-            isAdmin={true}
-          />
-        )}
-
-        {/* Here, we pass the active tab to the AdminPanel */}
-        <AdminPanel catalog={catalog} activeTab={activeTab} />
-      </main>
-    </div>
-  );
+  return <Login />;
 }
 
 export default Admin;

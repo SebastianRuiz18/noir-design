@@ -1,442 +1,168 @@
-/* ProductPage.css */
-
-/* --- CSS Variables (Rely on global definitions from App.css if available) --- */
-/* If you don't have these in App.css, consider defining them here for consistency: */
-/*
-:root {
-  --color-cafe-noir: #4A3A2C;       // Dark brown
-  --color-khaki: #B8A68B;           // Muted khaki/tan
-  --color-baby-powder: #F5F5F5;     // Very light off-white
-  --color-alabaster: #E8E8E8;       // Slightly darker off-white for subtle borders
-
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  --spacing-xxl: 64px;
-
-  --font-body: 'Montserrat', sans-serif;
-  --font-accent: 'Times New Roman', serif;
-  --font-title: 'The Seasons', serif; // Assuming "The Seasons" is loaded globally
-
-  --navbar-bg: var(--color-cafe-noir);
-  --navbar-text-color: var(--color-cafe-noir);
-  --card-background: #FFFFFF;
-  --highlight-text-color: var(--color-cafe-noir);
-}
-*/
-
-
-/* --- Main Page Container --- */
+/* --- Main Product Page Layout --- */
 .product-page-container {
-  background-color: var(--color-baby-powder); /* Soft, light background */
-  min-height: 100vh;
-  padding: var(--spacing-xxl) var(--spacing-xl); /* Generous padding */
-  color: var(--navbar-text-color); /* Dark brown for main text */
-  font-family: var(--font-body);
+  max-width: 960px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: sans-serif;
 }
 
-/* --- Product Card Wrapper (The main content block) --- */
 .product-detail-card {
-  max-width: 1200px; /* Slightly wider for a more spacious feel */
-  margin: 0 auto;
-  background-color: var(--card-background); /* Pure white, very clean */
-  padding: var(--spacing-xxl); /* Uniform generous padding */
-  border-radius: 4px; /* Very subtle rounding */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Lighter, broader shadow for elegance */
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center content horizontally */
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  position: relative;
 }
 
-/* --- Product Page Logo Styles --- */
-.product-page-logo-container {
-  width: 100%; /* Take full width of parent */
-  display: flex;
-  justify-content: center; /* Center the logo horizontally */
-  margin-bottom: var(--spacing-xxl); /* Space below the logo */
-  padding-bottom: var(--spacing-lg); /* Padding above the subtle border */
-  border-bottom: 1px solid var(--color-alabaster); /* Subtle separator line */
-  cursor: pointer; /* Indicates the logo is clickable */
-}
-
-.product-page-logo {
-  max-width: 200px; /* Adjust logo size as needed for a prominent but elegant display */
-  height: auto; /* Maintain aspect ratio */
-  object-fit: contain;
-  opacity: 0.9; /* Slight opacity for softness, but still very visible */
-  transition: opacity 0.3s ease; /* Smooth hover effect */
-}
-
-.product-page-logo:hover {
-    opacity: 1; /* Full opacity on hover for emphasis */
-}
-
-
-/* --- Back Button --- */
 .back-button {
-  margin-bottom: var(--spacing-xl); /* Adjusted margin, as logo is now above */
-  background-color: transparent; /* No background fill */
-  color: var(--color-cafe-noir); /* Dark brown text */
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--color-alabaster); /* Very subtle border */
-  border-radius: 4px; /* Match card border radius */
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: #f1f1f1;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
   cursor: pointer;
-  font-family: var(--font-accent); /* Clean accent font */
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  align-self: flex-start; /* Align to the start of the flex container */
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
-.back-button:hover {
-  background-color: var(--color-alabaster); /* Slight background on hover */
-  color: var(--color-cafe-noir); /* Keep text dark brown */
-  border-color: var(--color-khaki); /* Slightly darker border on hover */
-  transform: translateY(-2px); /* Subtle lift */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Light shadow on hover */
-}
-
-/* --- Product Content Section (Image + Info) --- */
 .product-content {
-  display: flex;
-  flex-wrap: wrap; /* Allows wrapping on smaller screens */
-  gap: var(--spacing-xxl); /* Increased gap for more breathing room */
-  width: 100%; /* Take full width of parent */
-  align-items: flex-start; /* Align items to the top */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: flex-start;
+  margin-top: 50px;
 }
 
-/* --- New Wrapper for Product Image (for relative positioning of zoom) --- */
+/* --- Image & Zoom Functionality --- */
 .product-image-wrapper {
-  flex: 1; /* Allows the wrapper to grow/shrink */
-  min-width: 350px; /* Minimum width before wrapping */
-  max-width: 550px; /* Max width for the wrapper */
-  height: auto; /* Ensures wrapper respects image height */
-  position: relative; /* <--- Crucial: Magnifying glass will be positioned relative to this */
-  overflow: hidden; /* <--- Essential for containing the magnifying glass */
-  border: 1px solid var(--color-alabaster); /* Border for the entire image box */
-  border-radius: 6px; /* Match image border radius */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.04); /* Keep shadow on wrapper */
-  cursor: crosshair; /* Indicates zoom functionality */
+  position: relative; /* Crucial for positioning the zoom glass */
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #eee;
+  cursor: crosshair; /* Indicates zoom is available */
 }
 
-/* --- Main Product Image (inside the wrapper) --- */
 .product-image-display {
-  width: 100%; /* Image fills its wrapper */
-  height: auto; /* Maintain aspect ratio */
-  display: block; /* Remove extra space below image */
-  object-fit: contain; /* Ensures the whole image is visible */
-  /* Remove transform: scale and transition from here, as the magnifier handles zoom */
+  width: 100%;
+  display: block;
 }
 
-/* --- Magnifying Glass Styles --- */
+/* This is your original magnifying glass style */
 .magnifying-glass {
   position: absolute;
-  /* Size and border-radius set dynamically in JS for easier configuration */
-  border: 2px solid var(--color-khaki); /* Subtle border for the magnifier */
-  border-radius: 50%; /* Make it circular */
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
-  overflow: hidden; /* Ensures only the magnified part is visible */
-  pointer-events: none; /* <--- Important: allows mouse events to pass through to the image below */
-  z-index: 10; /* Ensure it's on top of other content */
-  background-repeat: no-repeat; /* Crucial for controlling background image */
-  /* Transform and display properties are set dynamically via inline style in JS */
-  /* If you want a square magnifier, remove border-radius: 50%; */
+  border: 3px solid #ccc;
+  border-radius: 50%;
+  cursor: none;
+  /* Hide it when it's not over the image */
+  pointer-events: none;
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 
-.product-info-section {
-  flex: 1.5; /* Allows info section to take more space */
-  min-width: 350px; /* Minimum width before wrapping */
+/* --- Product Info --- */
+.product-info-section h1 {
+  margin-top: 0;
+  font-size: 2rem;
+}
+
+.copy-link-button {
+  margin-top: 20px;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  background-color: #fafafa;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+/* --- Variation Sections --- */
+.variations-section {
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid #eee;
+  text-align: center; /* This will center the H2 and the grid container */
+}
+
+.variations-section h2 {
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.variation-grid {
+  display: flex; /* Use Flexbox for a row layout */
+  flex-direction: row; /* Align items horizontally */
+  justify-content: center; /* Center the items in the row */
+  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+  gap: 20px; /* The space between items */
+}
+
+.variation-item {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Align content to the top */
-}
-
-.product-info-section h1 {
-  font-size: 3.5rem; /* Even larger, more luxurious title */
-  margin-bottom: var(--spacing-md);
-  color: var(--highlight-text-color); /* Café Noir */
-  line-height: 1.1;
-  text-transform: capitalize; /* Ensure nice capitalization */
-  letter-spacing: -0.5px; /* Tighten for elegance */
-  padding-right: var(--spacing-lg); /* Prevent title from hitting edge on smaller screens */
-}
-
-.product-info-section .description {
-  font-size: 1.15rem; /* Slightly larger, more inviting */
-  line-height: 1.7; /* Improved readability */
-  margin-bottom: var(--spacing-lg);
-  color: var(--navbar-text-color); /* Café Noir */
-  max-width: 600px; /* Constrain width for readability on large screens */
-}
-
-.product-info-section .measures {
-  font-family: var(--font-normal-italic);
-  font-size: 1.05rem;
-  margin-bottom: var(--spacing-xl);
-  color: var(--color-khaki); /* Khaki for a subtle, secondary look */
-  font-style: italic;
-}
-
-/* --- Copy Link Button --- */
-.copy-link-button {
-  background-color: var(--color-khaki); /* Main button color */
-  color: #fff; /* White text */
-  padding: var(--spacing-md) var(--spacing-lg); /* Current padding, might consider slightly more if desired */
-  border: 1px solid var(--color-khaki); /* Subtle initial border matching background */
-  border-radius: 6px; /* Slightly more rounded than 4px */
-  cursor: pointer;
-  font-family: var(--font-body); /* <--- Changed to body font for modern elegance */
-  font-size: 1rem;
-  transition: all 0.3s ease; /* <--- Transition for all changes (background, border, shadow, transform) */
-  display: flex;
   align-items: center;
-  justify-content: center; /* Ensures content is centered if max-width is wider */
-  gap: var(--spacing-xs);
-  max-width: fit-content;
-  letter-spacing: 0.5px;
-  font-weight: 500;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* <--- Subtle initial shadow for depth */
-}
-
-.copy-link-button:hover {
-  background-color: var(--color-cafe-noir); /* Darker brown on hover */
-  border-color: var(--color-cafe-noir); /* <--- Border also changes to match hover background */
-  transform: translateY(-2px); /* Lifts slightly */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* <--- More pronounced shadow on hover */
-}
-
-.copy-link-button:active {
-  transform: translateY(0); /* <--- Presses button down on click */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* <--- Flatter shadow on click */
-  background-color: var(--color-cafe-noir); /* Ensures color stays consistent */
-}
-
-
-/* --- Cut Shapes Section --- */
-.cut-shapes-section {
-  margin-top: var(--spacing-xxl); /* Generous space above this section */
-  border-top: 1px solid var(--color-alabaster); /* Subtle divider */
-  padding-top: var(--spacing-xxl); /* Padding after the divider */
-  width: 100%; /* Ensure it spans full width */
-  text-align: center; /* Center the title */
-}
-
-.cut-shapes-section h2 {
-  font-size: 2.2rem; /* Larger title for this section */
-  margin-bottom: var(--spacing-xl); /* More space below title */
-  color: var(--highlight-text-color); /* Café Noir */
-  font-weight: var(--font-title-weight);
-  font-style: var(--font-title-style);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.cut-shapes-grid {
-  display: flex;
-  justify-content: center; /* Center the grid items */
-  gap: var(--spacing-xl); /* Increased space between shapes */
-  flex-wrap: wrap; /* Allow wrapping */
-}
-
-.cut-shape-item {
   text-align: center;
-  width: 160px; /* Larger shape preview */
-  padding: var(--spacing-md);
-  background-color: var(--card-background); /* White background */
-  border: 1px solid var(--color-alabaster); /* Subtle border */
-  border-radius: 6px; /* Softer rounding */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03); /* Very light shadow */
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  padding: 5px;
+  border-radius: 8px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-.cut-shape-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* More pronounced shadow on hover */
-  border-color: var(--color-khaki); /* Slightly darker border on hover */
+.variation-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-.cut-shape-item img {
-  width: 100%;
-  height: 160px; /* Make image container square */
-  object-fit: contain;
-  border-radius: 4px; /* Slight rounding inside shape card */
-  margin-bottom: var(--spacing-sm);
-  background-color: var(--color-baby-powder); /* Light background for the image itself */
+.variation-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 10px;
 }
 
-.cut-shape-item p {
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  color: var(--navbar-text-color); /* Café Noir */
-  margin-top: 0;
-  margin-bottom: 0;
+.variation-item p {
+  margin: 0;
   font-weight: 500;
-  text-transform: capitalize;
+  font-size: 0.85rem;
+  color: #555;
 }
 
-/* --- Loading State --- */
-.loading-state {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh; /* Center in viewport */
-  font-family: var(--font-body);
-  font-size: 1.2rem;
-  color: var(--navbar-text-color);
-}
-
-/* --- Responsive Adjustments --- */
-@media (max-width: 1024px) {
-  .product-detail-card {
-    padding: var(--spacing-xl);
-  }
-  .product-page-logo { /* Adjust logo size */
-    max-width: 180px;
-  }
-  .product-content {
-    gap: var(--spacing-xl);
-  }
-  .product-info-section h1 {
-    font-size: 3rem;
-  }
-  .cut-shapes-section h2 {
-    font-size: 2rem;
-  }
-  .cut-shape-item {
-    width: 140px;
-    height: 140px; /* Keep consistent with image height */
-  }
-  .cut-shape-item img {
-    height: 140px;
-  }
-  /* Smaller default magnifier size for smaller screens */
-  .magnifying-glass {
-    width: 150px !important; /* Adjust if needed, !important for inline styles */
-    height: 150px !important;
-  }
-}
-
+/* --- NEW: Mobile Responsive Styles --- */
+/* This code will apply only to screens 768px wide or smaller (phones and small tablets) */
 @media (max-width: 768px) {
   .product-page-container {
-    padding: var(--spacing-xl) var(--spacing-md);
+    /* Reduce side padding on mobile */
+    margin: 0;
+    padding: 0;
   }
-  .product-detail-card {
-    padding: var(--spacing-lg);
-  }
-  .product-page-logo-container {
-    margin-bottom: var(--spacing-xl); /* Adjust margin for smaller screens */
-    padding-bottom: var(--spacing-md);
-  }
-  .product-page-logo {
-    max-width: 150px; /* Smaller logo on tablet */
-  }
-  .product-content {
-    flex-direction: column; /* Stack image and info vertically */
-    align-items: center; /* Center items when stacked */
-    gap: var(--spacing-lg);
-  }
-  .product-image-wrapper { /* Adjust wrapper for mobile */
-    max-width: 90%; /* Allow image to take more width when stacked */
-    min-width: unset; /* Remove min-width to allow more flexibility */
-  }
-  .product-image-display { /* Adjust image inside wrapper for mobile */
-    max-width: 100%;
-  }
-  .product-info-section {
-    min-width: unset; /* Remove min-width */
-    text-align: center; /* Center text content when stacked */
-  }
-  .product-info-section h1 {
-    font-size: 2.5rem;
-    padding-right: 0; /* No need for padding when centered */
-  }
-  .product-info-section .description {
-    text-align: center; /* Center description for better flow */
-    padding: 0; /* Remove extra padding */
-    font-size: 1rem;
-  }
-  .product-info-section .measures {
-    font-size: 1rem;
-  }
-  .back-button {
-    align-self: center; /* Center the back button too */
-    margin-bottom: var(--spacing-xl); /* Consistent margin */
-  }
-  .copy-link-button {
-    margin: 0 auto; /* Center the copy button */
-  }
-  .cut-shapes-section {
-    padding-top: var(--spacing-xl);
-    margin-top: var(--spacing-xl);
-  }
-  .cut-shapes-section h2 {
-    font-size: 1.8rem;
-    margin-bottom: var(--spacing-lg);
-  }
-  .cut-shapes-grid {
-    gap: var(--spacing-md);
-  }
-  .cut-shape-item {
-    width: 120px;
-    padding: var(--spacing-xs);
-  }
-  .cut-shape-item img {
-    height: 120px;
-  }
-  .cut-shape-item p {
-    font-size: 0.85rem;
-  }
-  /* Hide magnifying glass on smaller screens where it might be less practical */
-  .magnifying-glass {
-    display: none !important; /* Hide magnifier on smaller screens */
-  }
-}
 
-@media (max-width: 480px) {
-  .product-page-container {
-    padding: var(--spacing-lg) var(--spacing-sm);
-  }
   .product-detail-card {
-    padding: var(--spacing-md);
+    /* Remove shadow and padding to make it full-width */
+    box-shadow: none;
+    border-radius: 0;
+    padding: 15px;
   }
-  .product-page-logo-container {
-    margin-bottom: var(--spacing-lg);
-    padding-bottom: var(--spacing-sm);
+
+  /* This is the main fix: switch from a 2-column grid to a single column */
+  .product-content {
+    grid-template-columns: 1fr; /* Stack image and info vertically */
+    gap: 25px; /* Adjust the space between the image and the text */
+    margin-top: 40px;
   }
-  .product-page-logo {
-    max-width: 120px; /* Smallest logo on phone */
-  }
-  /* Image wrapper and display will adapt due to max-width: 100% already set */
+
   .product-info-section h1 {
-    font-size: 2rem;
+    /* Slightly smaller heading for mobile */
+    font-size: 1.8rem;
   }
-  .product-info-section .description {
-    font-size: 0.95rem;
+
+  /* Make the variation grids a bit more compact on mobile */
+  .variation-grid {
+    gap: 15px;
   }
-  .product-info-section .measures {
-    font-size: 0.9rem;
-  }
-  .copy-link-button {
-    padding: var(--spacing-sm) var(--spacing-md);
-    font-size: 0.9rem;
-  }
-  .cut-shapes-section h2 {
-    font-size: 1.4rem;
-  }
-  .cut-shapes-grid {
-    gap: var(--spacing-sm);
-  }
-  .cut-shape-item {
-    width: 90px;
-  }
-  .cut-shape-item img {
-    height: 90px;
+
+  .variation-item img {
+    width: 50px;
+    height: 50px;
   }
 }

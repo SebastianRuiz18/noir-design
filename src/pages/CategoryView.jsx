@@ -1,30 +1,64 @@
-import { useParams } from "react-router-dom";
-import DynamicProductGrid from "../components/DynamicProductGrid";
-import useCatalogFromFirebase from "../hooks/useCatalogFromFirebase";
-import Navbar from "../components/Navbar";
+import React from 'react';
+import { useParams, Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import useCatalogFromFirebase from '../hooks/useCatalogFromFirebase';
+import DynamicProductGrid from '../components/DynamicProductGrid';
+import { Box, Typography, CircularProgress, Alert, Paper, Grid } from '@mui/material';
 
 function CategoryView() {
   const { categoryId, subcategoryId } = useParams();
-  const catalog = useCatalogFromFirebase();
+  const { catalog, loading, error } = useCatalogFromFirebase();
 
-  const selectedCategory = catalog.find((cat) => cat.id === categoryId);
-  const selectedSubcategory = selectedCategory?.subcategories.find(
-    (sub) => sub.id === subcategoryId
-  );
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return <Alert severity="error">Error al cargar el catálogo de productos.</Alert>;
+  }
+
+  const category = catalog.find(cat => cat.id === categoryId);
+
+  if (!category) {
+    return <Alert severity="warning">La categoría solicitada no fue encontrada.</Alert>;
+  }
 
   return (
-    <div className="app-container">
+    <div>
       <Navbar catalog={catalog} />
-      <main className="main-content">
-        {selectedSubcategory ? (
-          <>
-            <h2 className="subcategory-title">{selectedSubcategory.name}</h2>
-            <DynamicProductGrid subcategoryId={selectedSubcategory.id} isAdmin={false} />
-          </>
+      <Box sx={{ pt: 4, pb: 4, px: { xs: 2, sm: 4 } }}>
+        {subcategoryId ? (
+          <DynamicProductGrid subcategoryId={subcategoryId} catalog={catalog} />
         ) : (
-          <p className="not-found">Subcategoría no encontrada</p>
+          <Box>
+            <Typography variant="h3" component="h1" gutterBottom align="center">
+              {category.name}
+            </Typography>
+            <Typography variant="h6" component="p" align="center" color="text.secondary" sx={{ mb: 4 }}>
+              Selecciona una subcategoría para ver los productos.
+            </Typography>
+            <Grid container spacing={3} justifyContent="center">
+              {(category.subcategories || []).map(sub => (
+                <Grid item key={sub.id}>
+                  <Paper elevation={3} sx={{ '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' } }}>
+                    <Link to={`/category/${categoryId}/${sub.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <Box sx={{ p: 4, textAlign: 'center' }}>
+                        <Typography variant="h5">{sub.name}</Typography>
+                      </Box>
+                    </Link>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
         )}
-      </main>
+      </Box>
+      <Footer />
     </div>
   );
 }

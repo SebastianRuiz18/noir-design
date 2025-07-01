@@ -1,0 +1,86 @@
+/*
+ * Styles specifically for the Featured Products grid on the home page.
+ */
+
+.featured-product-grid {
+  display: grid;
+  width: 100%;
+  /* On large screens, we display exactly 5 columns. */
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem; /* A comfortable gap between cards. */
+  padding: 1rem 0;
+}
+
+.featured-product-card {
+  background-color: #ffffff;
+  border: 1px solid #f0f0f0; /* A very subtle border. */
+  border-radius: 12px; /* Softer, more modern corners. */
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.featured-product-card:hover {
+  transform: translateY(-8px); /* A slight lift on hover. */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07); /* A soft, clean shadow. */
+}
+
+/* This container ensures all images are perfectly square and responsive. */
+.featured-product-card .image-container {
+  width: 100%;
+  padding-top: 100%; /* This creates the square aspect ratio (height = width). */
+  position: relative;
+  overflow: hidden;
+}
+
+.featured-product-card img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image covers the area without distortion. */
+}
+
+/* Styling for the text content below the image. */
+.featured-product-card .info {
+  padding: 1rem;
+  border-top: 1px solid #f0f0f0;
+  flex-grow: 1; /* Allows the info section to fill available space. */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.featured-product-card .name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.featured-product-card .measures {
+  font-size: 0.8rem;
+  color: #777;
+  margin-top: 0.25rem;
+}
+
+
+/* --- Responsive Design --- */
+/* For tablets and smaller laptops */
+@media (max-width: 1200px) {
+  .featured-product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* For mobile devices in portrait mode */
+@media (max-width: 768px) {
+  .featured-product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}

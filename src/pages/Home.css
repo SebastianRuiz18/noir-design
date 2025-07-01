@@ -493,3 +493,34 @@
     padding-top: 50px;
   }
 }
+
+/* --- NEW: Welcome Curtain Responsive Styles --- */
+@media (max-width: 768px) {
+  .welcome-content {
+    /* Reduce padding to give more space on smaller screens */
+    padding: 20px;
+  }
+
+  .welcome-logo {
+    /* This is the main fix. 
+       'max-width' ensures the logo never overflows the screen's width.
+       'width' at 80% makes it large but with comfortable margins. */
+    max-width: 300px; /* Adjust this value if needed */
+    width: 80%;
+    height: auto; /* Maintain aspect ratio */
+  }
+
+  .welcome-title {
+    /* Slightly smaller font size for the title on mobile */
+    font-size: 2rem;
+  }
+
+  .welcome-tagline {
+    /* Smaller font size for the tagline */
+    font-size: 1rem;
+  }
+
+  .welcome-description {
+    font-size: 0.9rem;
+  }
+}

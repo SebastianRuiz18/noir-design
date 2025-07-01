@@ -4,18 +4,18 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCIFriqRvAbFhJo3LcmpTtZ39Mi36vxT2M",
-    authDomain: "noir-catalog.firebaseapp.com",
-    projectId: "noir-catalog",
-    storageBucket: "noir-catalog.firebasestorage.app",
-    messagingSenderId: "756731212566",
-    appId: "1:756731212566:web:fe2b96b1cffd59b5635637"
+    apiKey: import.meta.env.VITE_API_KEY,
+    authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_APP_ID
 };
 
-// Inicializa la app
+// Initialize the app
 const app = initializeApp(firebaseConfig);
 
-// Exporta servicios
+// Export services
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();

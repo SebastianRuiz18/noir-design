@@ -192,4 +192,15 @@
     gap: 0.2rem; /* Very small gap when stacked */
     text-align: center;
   }
+
+    /* --- NEW: Styles for footer links --- */
+  .footer-bottom .footer-link a {
+    color: inherit; /* Makes the link take the same color as the text around it */
+    text-decoration: none; /* Removes the default underline */
+    transition: color 0.2s ease;
+  }
+
+  .footer-bottom .footer-link a:hover {
+    color: #f0f0f0; /* The same hover color as your other links */
+  }
 }

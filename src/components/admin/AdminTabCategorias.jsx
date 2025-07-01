@@ -1,240 +1,198 @@
-// src/components/admin/AdminTabCategorias.jsx
 import { useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../../firebase";
+import { Box, Button, TextField, Typography, Select, MenuItem, FormControl, InputLabel, Stack, RadioGroup, FormControlLabel, Radio, Paper, IconButton, Chip, Checkbox } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-import "./AdminTabCategorias.css"; // <--- Import the new CSS file
 
-function AdminTabCategorias({ catalog }) {
-  // --- CATEGORÍA ---
+function AdminTabCategorias({ catalog, onDataChange }) {
+  // --- All state variables remain the same ---
   const [newCategory, setNewCategory] = useState("");
-
-  // --- SUBCATEGORÍA ---
   const [selectedCategory, setSelectedCategory] = useState("");
   const [newSubcategory, setNewSubcategory] = useState("");
-
-  // --- PRODUCTO ---
+  const [cutName, setCutName] = useState("");
+  const [cutImage, setCutImage] = useState("");
   const [productCat, setProductCat] = useState("");
   const [productSubcat, setProductSubcat] = useState("");
   const [productName, setProductName] = useState("");
   const [productMeasures, setProductMeasures] = useState("");
   const [productImage, setProductImage] = useState("");
   const [productDescription, setProductDescription] = useState("");
+  const [variationType, setVariationType] = useState('tipos_de_corte'); 
+  const [colorVariations, setColorVariations] = useState([]);
+  const [currentColorName, setCurrentColorName] = useState("");
+  const [currentColorImage, setCurrentColorImage] = useState("");
+  const [showCutShapesWithColor, setShowCutShapesWithColor] = useState(false);
 
-  // --- CORTE ---
-  const [cutName, setCutName] = useState("");
-  const [cutImage, setCutImage] = useState("");
-
-  // --- HANDLERS ---
+  // --- All handler functions are now complete and correct ---
   const handleAddCategory = async () => {
     if (!newCategory.trim()) return alert("Ingresa un nombre para la categoría.");
     try {
-      await addDoc(collection(db, "categories"), {
-        name: newCategory,
-        subcategories: [],
-      });
-      alert("Categoría agregada ✅");
-      setNewCategory("");
-    } catch (err) {
-      alert("Error al agregar categoría ❌");
-      console.error(err);
-    }
+      await addDoc(collection(db, "categories"), { name: newCategory, image: "", subcategories: [] });
+      alert("Categoría agregada ✅"); setNewCategory(""); onDataChange(); 
+    } catch (err) { alert("Error al agregar categoría ❌"); console.error(err); }
   };
 
   const handleAddSubcategory = async () => {
-    if (!selectedCategory || !newSubcategory.trim()) return alert("Selecciona una categoría y escribe el nombre.");
+    if (!selectedCategory || !newSubcategory.trim()) return alert("Selecciona una categoría y escribe un nombre.");
     try {
-      // Find the category in your local catalog data
-      const catDoc = catalog.find((c) => c.id === selectedCategory);
-      if (!catDoc) return alert("Categoría no encontrada ❌");
+      const categoryDocRef = doc(db, "categories", selectedCategory);
+      const newSubcategoryObject = { id: newSubcategory.toLowerCase().replace(/\s+/g, "-").trim(), name: newSubcategory.trim() };
+      await updateDoc(categoryDocRef, { subcategories: arrayUnion(newSubcategoryObject) });
+      alert("Subcategoría agregada ✅"); setNewSubcategory(""); onDataChange(); 
+    } catch (err) { console.error("Error adding subcategory:", err); alert("Error al agregar la subcategoría."); }
+  };
+  
+  const handleAddCutShape = async () => {
+    if (!cutName || !cutImage) return alert("Completa el nombre y la imagen.");
+    try {
+      await addDoc(collection(db, "cortes"), { name: cutName, image: cutImage });
+      alert("Tipo de corte agregado ✅"); setCutName(""); setCutImage("");
+    } catch (err) { alert("Error al agregar tipo de corte ❌"); console.error(err); }
+  };
 
-      // Construct the updated subcategories array
-      const updatedSubcats = [...catDoc.subcategories, {
-        id: newSubcategory.toLowerCase().replace(/\s+/g, "-"), // Generate a slug-like ID
-        name: newSubcategory,
-      }];
-
-      // IMPORTANT: Your `fetch('/api/updateCategory')` call here is specific to your backend setup.
-      // If you are directly updating Firestore, you would typically use `updateDoc` on the specific category document.
-      // For example:
-      // const categoryRef = doc(db, "categories", selectedCategory);
-      // await updateDoc(categoryRef, { subcategories: updatedSubcats });
-
-      // Keeping your original API call structure for now:
-      await fetch(`/api/updateCategory?catId=${selectedCategory}`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json', // Specify content type
-        },
-        body: JSON.stringify(updatedSubcats),
-      });
-
-      alert("Subcategoría agregada ✅");
-      setNewSubcategory("");
-      // You might need to trigger a re-fetch of the catalog or update local state
-      // if `useCatalogFromFirebase` doesn't automatically detect changes.
-    } catch (err) {
-      alert("Error al agregar subcategoría ❌");
-      console.error(err);
+  // **THE FIX IS HERE:** Restored the working code for this function.
+  const handleAddColor = () => {
+    if (!currentColorName || !currentColorImage) {
+      alert("Por favor, ingresa el nombre y la URL de la imagen del color.");
+      return;
     }
+    setColorVariations([...colorVariations, { name: currentColorName, image: currentColorImage }]);
+    setCurrentColorName("");
+    setCurrentColorImage("");
+  };
+
+  const handleRemoveColor = (indexToRemove) => {
+    setColorVariations(colorVariations.filter((_, index) => index !== indexToRemove));
   };
 
   const handleAddProduct = async () => {
-    if (!productCat || !productSubcat || !productName || !productMeasures || !productImage) {
-      return alert("Completa todos los campos del producto.");
+    if (!productCat || !productSubcat || !productName || !productImage) {
+      return alert("Completa los campos principales del producto (Categoría, Subcategoría, Nombre, Imagen).");
+    }
+    let productData = {
+      name: productName, measures: productMeasures, image: productImage,
+      description: productDescription, createdAt: serverTimestamp(),
+      variationType: variationType
+    };
+    if (variationType === 'color_variations') {
+      if (colorVariations.length === 0) return alert("Por favor, agrega al menos una variación de color.");
+      productData.colorVariations = colorVariations;
+      productData.showCutShapesWithColor = showCutShapesWithColor;
     }
     try {
-      await addDoc(collection(db, `products-${productSubcat}`), {
-        name: productName,
-        measures: productMeasures,
-        image: productImage,
-        description: productDescription,
-        createdAt: new Date(),
-      });
+      await addDoc(collection(db, `products-${productSubcat}`), productData);
       alert("Producto agregado ✅");
-      setProductName("");
-      setProductMeasures("");
-      setProductImage("");
-      setProductDescription("");
-    } catch (err) {
-      alert("Error al agregar producto ❌");
-      console.error(err);
-    }
-  };
-
-  const handleAddCutShape = async () => {
-    if (!cutName || !cutImage) return alert("Completa el nombre y la imagen del tipo de corte.");
-    try {
-      await addDoc(collection(db, "cortes"), {
-        name: cutName,
-        image: cutImage,
-      });
-      alert("Tipo de corte agregado ✅");
-      setCutName("");
-      setCutImage("");
-    } catch (err) {
-      alert("Error al agregar tipo de corte ❌");
-      console.error(err);
-    }
+      setProductCat(""); setProductSubcat(""); setProductName("");
+      setProductMeasures(""); setProductImage(""); setProductDescription("");
+      setVariationType('tipos_de_corte'); setColorVariations([]);
+      setCurrentColorName(""); setCurrentColorImage("");
+      setShowCutShapesWithColor(false);
+    } catch (err) { alert("Error al agregar el producto ❌"); console.error(err); }
   };
 
   const subcategories = catalog.find(c => c.id === productCat)?.subcategories || [];
 
   return (
-    <div className="admin-tab-content">
-      {/* === CATEGORÍA === */}
-      <section className="admin-form-section">
-        <h3 className="admin-form-section-title">Agregar nueva categoría</h3>
-        <input
-          className="admin-input" // FIXED: Removed the inline comment here
-          value={newCategory}
-          onChange={e => setNewCategory(e.target.value)}
-          placeholder="Nombre categoría"
-        />
-        <button className="admin-add-button" onClick={handleAddCategory}>Agregar</button>
-      </section>
+    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 3 }}>
+        
+        {/* Other forms remain here */}
+        <Box component="section" sx={{ p: 2, border: '1px solid #e0e0e0', borderRadius: 2 }}>
+            <Typography variant="h6" gutterBottom>Agregar Nueva Categoría</Typography>
+            <Stack spacing={2}>
+              <TextField label="Nombre categoría" variant="outlined" value={newCategory} onChange={e => setNewCategory(e.target.value)} />
+              <Button variant="contained" onClick={handleAddCategory}>Agregar</Button>
+            </Stack>
+        </Box>
+        <Box component="section" sx={{ p: 2, border: '1px solid #e0e0e0', borderRadius: 2 }}>
+            <Typography variant="h6" gutterBottom>Agregar Nueva Subcategoría</Typography>
+            <Stack spacing={2}>
+              <FormControl fullWidth>
+                <InputLabel>Categoría Principal</InputLabel>
+                <Select value={selectedCategory} label="Categoría Principal" onChange={e => setSelectedCategory(e.target.value)}>
+                  {catalog.map(c => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}
+                </Select>
+              </FormControl>
+              <TextField label="Nombre subcategoría" variant="outlined" value={newSubcategory} onChange={e => setNewSubcategory(e.target.value)} />
+              <Button variant="contained" onClick={handleAddSubcategory}>Agregar</Button>
+            </Stack>
+        </Box>
 
-      {/* === SUBCATEGORÍA === */}
-      <section className="admin-form-section">
-        <h3 className="admin-form-section-title">Agregar nueva subcategoría</h3>
-        <select
-          className="admin-select" // FIXED: Removed the inline comment here
-          value={selectedCategory}
-          onChange={e => setSelectedCategory(e.target.value)}
-        >
-          <option value="">Selecciona categoría</option>
-          {catalog.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-        </select>
-        <input
-          className="admin-input" // FIXED: Removed the inline comment here
-          value={newSubcategory}
-          onChange={e => setNewSubcategory(e.target.value)}
-          placeholder="Nombre subcategoría"
-        />
-        <button className="admin-add-button" onClick={handleAddSubcategory}>Agregar</button>
-      </section>
+        {/* --- UPDATED "ADD PRODUCT" FORM --- */}
+        <Box component="section" sx={{ p: 2, border: '1px solid #e0e0e0', borderRadius: 2, gridColumn: '1 / -1' }}>
+            <Typography variant="h6" gutterBottom>Agregar Nuevo Producto</Typography>
+            <Stack spacing={2}>
+                <FormControl fullWidth>
+                    <InputLabel>Categoría</InputLabel>
+                    <Select value={productCat} label="Categoría" onChange={e => { setProductCat(e.target.value); setProductSubcat(""); }}>
+                        {catalog.map(c => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}
+                    </Select>
+                </FormControl>
+                <FormControl fullWidth disabled={!productCat}>
+                    <InputLabel>Subcategoría</InputLabel>
+                    <Select value={productSubcat} label="Subcategoría" onChange={e => setProductSubcat(e.target.value)}>
+                        {subcategories.map(s => <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>)}
+                    </Select>
+                </FormControl>
+                <TextField label="Nombre del Producto" variant="outlined" value={productName} onChange={e => setProductName(e.target.value)} />
+                <TextField label="URL de Imagen Principal" variant="outlined" value={productImage} onChange={e => setProductImage(e.target.value)} />
+                <TextField label="Medidas" variant="outlined" value={productMeasures} onChange={e => setProductMeasures(e.target.value)} />
+                <TextField label="Descripción" variant="outlined" multiline rows={3} value={productDescription} onChange={e => setProductDescription(e.target.value)} />
 
-      {/* === PRODUCTO === */}
-      <section className="admin-form-section">
-        <h3 className="admin-form-section-title">Agregar nuevo producto</h3>
-        <select
-          className="admin-select" // FIXED: Removed the inline comment here
-          value={productCat}
-          onChange={e => {
-            setProductCat(e.target.value);
-            setProductSubcat(""); // Reset subcategory when category changes
-          }}
-        >
-          <option value="">Selecciona categoría</option>
-          {catalog.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-        </select>
-        <select
-          className="admin-select" // FIXED: Removed the inline comment here
-          value={productSubcat}
-          onChange={e => setProductSubcat(e.target.value)}
-          disabled={!productCat} // Disable if no category selected
-        >
-          <option value="">Selecciona subcategoría</option>
-          {subcategories.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-        </select>
-        <input
-          className="admin-input" // FIXED: Removed the inline comment here
-          value={productName}
-          onChange={e => setProductName(e.target.value)}
-          placeholder="Nombre"
-        />
-        <input
-          className="admin-input" // FIXED: Removed the inline comment here
-          value={productMeasures}
-          onChange={e => setProductMeasures(e.target.value)}
-          placeholder="Medidas"
-        />
-        <input
-          className="admin-input" // FIXED: Removed the inline comment here
-          value={productImage}
-          onChange={e => setProductImage(e.target.value)}
-          placeholder="URL imagen"
-        />
-        <textarea
-          className="admin-textarea" // FIXED: Removed the inline comment here
-          value={productDescription}
-          onChange={e => setProductDescription(e.target.value)}
-          placeholder="Descripción"
-        />
-        <button className="admin-add-button" onClick={handleAddProduct}>Agregar</button>
+                <FormControl component="fieldset">
+                    <Typography variant="subtitle1" sx={{ mt: 2, mb: 1 }}>Opciones del Producto</Typography>
+                    <RadioGroup row value={variationType} onChange={(e) => setVariationType(e.target.value)}>
+                        <FormControlLabel value="tipos_de_corte" control={<Radio />} label="Mostrar Tipos de Corte" />
+                        <FormControlLabel value="color_variations" control={<Radio />} label="Mostrar Variaciones de Color" />
+                    </RadioGroup>
+                </FormControl>
 
-        <div className="admin-image-preview">
-          <h4 className="admin-preview-title">Preview:</h4>
-          {productImage && <img src={productImage} alt="preview" className="admin-preview-image" />}
-          <p className="admin-preview-text"><strong>{productName}</strong></p>
-          <p className="admin-preview-text">{productMeasures}</p>
-          <p className="admin-preview-text">{productDescription}</p>
-        </div>
-      </section>
-
-      {/* === TIPO DE CORTE === */}
-      <section className="admin-form-section">
-        <h3 className="admin-form-section-title">Agregar tipo de corte</h3>
-        <input
-          className="admin-input" // FIXED: Removed the inline comment here
-          value={cutName}
-          onChange={e => setCutName(e.target.value)}
-          placeholder="Nombre del corte"
-        />
-        <input
-          className="admin-input" // FIXED: Removed the inline comment here
-          value={cutImage}
-          onChange={e => setCutImage(e.target.value)}
-          placeholder="URL imagen"
-        />
-        <button className="admin-add-button" onClick={handleAddCutShape}>Agregar</button>
-        <div className="admin-image-preview">
-          <h4 className="admin-preview-title">Preview:</h4>
-          {cutImage && <img src={cutImage} alt="cut preview" className="admin-preview-image" />}
-          <p className="admin-preview-text">{cutName}</p>
-        </div>
-      </section>
-    </div>
+                {variationType === 'color_variations' && (
+                    <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#fcfcfc' }}>
+                        <FormControlLabel 
+                          control={
+                            <Checkbox 
+                              checked={showCutShapesWithColor} 
+                              onChange={(e) => setShowCutShapesWithColor(e.target.checked)} 
+                            />} 
+                          label="Mostrar también los Tipos de Corte globales" 
+                        />
+                        <Typography variant="subtitle2" gutterBottom sx={{mt: 2}}>Define los colores para este producto:</Typography>
+                        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
+                            <TextField size="small" label="Nombre del Color" value={currentColorName} onChange={(e) => setCurrentColorName(e.target.value)} />
+                            <TextField size="small" label="URL Imagen del Color" value={currentColorImage} onChange={(e) => setCurrentColorImage(e.target.value)} sx={{flexGrow: 1}}/>
+                            <Button variant="outlined" onClick={handleAddColor} startIcon={<AddIcon />}>Agregar</Button>
+                        </Stack>
+                        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                            {colorVariations.map((color, index) => (
+                                <Chip
+                                    key={index}
+                                    label={color.name}
+                                    onDelete={() => handleRemoveColor(index)}
+                                    deleteIcon={<DeleteIcon />}
+                                />
+                            ))}
+                        </Stack>
+                    </Paper>
+                )}
+                
+                <Button variant="contained" color="primary" onClick={handleAddProduct} sx={{ mt: 2, p: 1.5 }}>
+                    Guardar Producto
+                </Button>
+            </Stack>
+        </Box>
+        
+        {/* Cut Shape form */}
+        <Box component="section" sx={{ p: 2, border: '1px solid #e0e0e0', borderRadius: 2 }}>
+            <Typography variant="h6" gutterBottom>Agregar Tipo de Corte</Typography>
+            <Stack spacing={2}>
+              <TextField label="Nombre del corte" variant="outlined" value={cutName} onChange={e => setCutName(e.target.value)} />
+              <TextField label="URL Imagen del corte" variant="outlined" value={cutImage} onChange={e => setCutImage(e.target.value)} />
+              <Button variant="contained" onClick={handleAddCutShape}>Agregar</Button>
+            </Stack>
+        </Box>
+    </Box>
   );
 }
 

@@ -1,330 +1,195 @@
-// src/components/admin/AdminTabEditar.jsx
-import { useState, useEffect, useCallback } from "react"; // Added useCallback
-import {
-  updateDoc,
-  doc,
-  collection,
-  getDocs,
-} from "firebase/firestore";
+import { useState, useEffect } from "react";
+import { doc, updateDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
+import { Box, Button, TextField, Typography, Select, MenuItem, FormControl, InputLabel, Stack, Paper, List, ListItemButton, ListItemText, CircularProgress, Alert } from '@mui/material';
 
-import "./AdminTabEditar.css"; // <--- Import the new CSS file
+function AdminTabEditar({ catalog, onDataChange }) {
+  const [dataType, setDataType] = useState("products"); // Default to products as it's most common
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  
+  // State for the selected item and its form fields
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [editName, setEditName] = useState("");
+  const [editImage, setEditImage] = useState("");
+  const [editMeasures, setEditMeasures] = useState("");
+  const [editDescription, setEditDescription] = useState("");
 
-function AdminTabEditar({ catalog }) {
-  const [categoryId, setCategoryId] = useState("");
-  const [subcategoryId, setSubcategoryId] = useState("");
-  const [productId, setProductId] = useState("");
-  const [cutId, setCutId] = useState("");
-  const [cuts, setCuts] = useState([]);
-  const [products, setProducts] = useState([]);
-
-  // fields for editing
-  const [newCategoryName, setNewCategoryName] = useState("");
-  const [newSubcategoryName, setNewSubcategoryName] = useState("");
-  const [newProductName, setNewProductName] = useState("");
-  const [newMeasures, setNewMeasures] = useState("");
-  const [newImageUrl, setNewImageUrl] = useState("");
-  const [newDescription, setNewDescription] = useState("");
-  const [newCutName, setNewCutName] = useState("");
-  const [newCutImage, setNewCutImage] = useState("");
-
-  // Helper to find subcategories for a given category ID
-  const getSubcategoriesForCategory = useCallback((catId) => {
-    return catalog.find(c => c.id === catId)?.subcategories || [];
-  }, [catalog]);
-
-  // Effect to fetch products when subcategoryId changes
   useEffect(() => {
-    if (!subcategoryId) {
-      setProducts([]); // Clear products if no subcategory is selected
-      setProductId(""); // Clear selected product
-      return;
-    }
-    const fetchProducts = async () => {
-      const querySnapshot = await getDocs(collection(db, `products-${subcategoryId}`));
-      const list = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setProducts(list);
-    };
-    fetchProducts();
-  }, [subcategoryId]);
-
-  // Effect to fetch cuts when component mounts
-  useEffect(() => {
-    const fetchCuts = async () => {
-      const querySnapshot = await getDocs(collection(db, "cortes"));
-      const list = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setCuts(list);
-    };
-    fetchCuts();
-  }, []);
-
-  // Effect to populate Category Name when categoryId changes
-  useEffect(() => {
-    if (categoryId) {
-      const selectedCat = catalog.find(c => c.id === categoryId);
-      setNewCategoryName(selectedCat ? selectedCat.name : "");
-      setSubcategoryId(""); // Reset subcategory when category changes
-    } else {
-      setNewCategoryName("");
-    }
-  }, [categoryId, catalog]);
-
-  // Effect to populate Subcategory Name when subcategoryId changes
-  useEffect(() => {
-    if (categoryId && subcategoryId) {
-      const subcategories = getSubcategoriesForCategory(categoryId);
-      const selectedSub = subcategories.find(sub => sub.id === subcategoryId);
-      setNewSubcategoryName(selectedSub ? selectedSub.name : "");
-      setProductId(""); // Reset product when subcategory changes
-    } else {
-      setNewSubcategoryName("");
-    }
-  }, [categoryId, subcategoryId, getSubcategoriesForCategory]);
-
-
-  // Effect to populate Product fields when productId changes
-  useEffect(() => {
-    if (productId) {
-      const selectedProduct = products.find(p => p.id === productId);
-      if (selectedProduct) {
-        setNewProductName(selectedProduct.name || "");
-        setNewMeasures(selectedProduct.measures || "");
-        setNewImageUrl(selectedProduct.image || "");
-        setNewDescription(selectedProduct.description || "");
+    const fetchItems = async () => {
+      setLoading(true);
+      setItems([]);
+      setSelectedItem(null); // Clear selection when type changes
+      let fetchedItems = [];
+      
+      try {
+        if (dataType === 'categories') {
+          fetchedItems = catalog.map(cat => ({ ...cat, type: 'category' }));
+        } 
+        else if (dataType === 'subcategories') {
+          fetchedItems = catalog.flatMap(cat => 
+            (cat.subcategories || []).map(sub => ({ ...sub, type: 'subcategory', parentCategory: cat }))
+          );
+        }
+        else if (dataType === 'products') {
+          const allSubcategories = catalog.flatMap(cat => cat.subcategories || []);
+          const productPromises = allSubcategories.map(sub => getDocs(collection(db, `products-${sub.id}`)));
+          const productSnapshots = await Promise.all(productPromises);
+          
+          fetchedItems = productSnapshots.flatMap(snapshot => 
+            snapshot.docs.map(doc => ({ 
+              id: doc.id, ...doc.data(), type: 'product',
+              subcategoryId: doc.ref.parent.id.replace('products-', '') 
+            }))
+          );
+        }
+        else if (dataType === 'cortes') {
+          const cortesSnapshot = await getDocs(collection(db, "cortes"));
+          fetchedItems = cortesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), type: 'corte' }));
+        }
+        setItems(fetchedItems);
+      } catch (err) {
+        console.error(`Error fetching ${dataType}:`, err);
+      } finally {
+        setLoading(false);
       }
-    } else {
-      setNewProductName("");
-      setNewMeasures("");
-      setNewImageUrl("");
-      setNewDescription("");
-    }
-  }, [productId, products]);
+    };
 
-  // Effect to populate Cut fields when cutId changes
-  useEffect(() => {
-    if (cutId) {
-      const selectedCut = cuts.find(c => c.id === cutId);
-      if (selectedCut) {
-        setNewCutName(selectedCut.name || "");
-        setNewCutImage(selectedCut.image || "");
-      }
-    } else {
-      setNewCutName("");
-      setNewCutImage("");
-    }
-  }, [cutId, cuts]);
+    fetchItems();
+  }, [dataType, catalog]);
 
+  // When an item is selected from the list, populate the form fields
+  const handleSelect = (item) => {
+    setSelectedItem(item);
+    setEditName(item.name || "");
+    setEditImage(item.image || "");
+    setEditMeasures(item.measures || "");
+    setEditDescription(item.description || "");
+  };
+  
+  // The main update function
+  const handleUpdate = async () => {
+    if (!selectedItem) return;
 
-  const updateCategory = async () => {
-    if (!categoryId || !newCategoryName.trim()) return alert("Faltan datos para actualizar la categoría.");
+    let docRef;
+    let updatedData = {};
+
     try {
-      await updateDoc(doc(db, "categories", categoryId), { name: newCategoryName });
-      alert("Categoría actualizada ✅");
-      // Optionally, refresh catalog data here if useCatalogFromFirebase doesn't auto-update
+      if (selectedItem.type === 'category') {
+        docRef = doc(db, "categories", selectedItem.id);
+        updatedData = { name: editName };
+      } 
+      else if (selectedItem.type === 'subcategory') {
+        docRef = doc(db, "categories", selectedItem.parentCategory.id);
+        const subIndex = selectedItem.parentCategory.subcategories.findIndex(s => s.id === selectedItem.id);
+        if (subIndex === -1) throw new Error("Subcategory not found.");
+        
+        const updatedSubcategories = [...selectedItem.parentCategory.subcategories];
+        updatedSubcategories[subIndex] = { ...updatedSubcategories[subIndex], name: editName };
+        updatedData = { subcategories: updatedSubcategories };
+      }
+      else if (selectedItem.type === 'product') {
+        docRef = doc(db, `products-${selectedItem.subcategoryId}`, selectedItem.id);
+        updatedData = { name: editName, measures: editMeasures, image: editImage, description: editDescription };
+      }
+      else if (selectedItem.type === 'corte') {
+        docRef = doc(db, "cortes", selectedItem.id);
+        updatedData = { name: editName, image: editImage };
+      }
+
+      await updateDoc(docRef, updatedData);
+      
+      alert("Elemento actualizado ✅");
+      setSelectedItem(null); // Clear form
+      onDataChange(); // Refresh catalog data
     } catch (err) {
-      console.error("Error updating category:", err);
-      alert("Error al actualizar categoría ❌");
+      console.error("Error updating document:", err);
+      alert("Error al actualizar el elemento.");
     }
   };
 
-  const updateSubcategory = async () => {
-    if (!categoryId || !subcategoryId || !newSubcategoryName.trim()) return alert("Faltan datos para actualizar la subcategoría.");
-    try {
-      const ref = doc(db, "categories", categoryId);
-      const subcategories = getSubcategoriesForCategory(categoryId);
-      const updatedSubcategories = subcategories.map(sub =>
-        sub.id === subcategoryId ? { ...sub, name: newSubcategoryName } : sub
+  const renderEditForm = () => {
+    if (!selectedItem) {
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 5, border: '2px dashed #e0e0e0', borderRadius: 2, height: '100%' }}>
+          <Typography variant="h6" color="text.secondary">Selecciona un elemento de la lista para editar.</Typography>
+        </Box>
       );
-      // Assuming you're directly updating Firestore for subcategories, not via an API
-      await updateDoc(ref, { subcategories: updatedSubcategories });
-      alert("Subcategoría actualizada ✅");
-      // Optionally, refresh catalog data here
-    } catch (err) {
-      console.error("Error updating subcategory:", err);
-      alert("Error al actualizar subcategoría ❌");
     }
-  };
+    
+    return (
+      <Paper elevation={2} sx={{ p: 3 }}>
+        <Typography variant="h6" gutterBottom>Editando: {selectedItem.name}</Typography>
+        <Stack spacing={2}>
+          <TextField label="Nombre" variant="outlined" fullWidth value={editName} onChange={(e) => setEditName(e.target.value)} />
 
-  const updateProduct = async () => {
-    if (!subcategoryId || !productId || !newProductName.trim() || !newMeasures.trim() || !newImageUrl.trim()) {
-      return alert("Completa todos los campos del producto para actualizar.");
-    }
-    try {
-      await updateDoc(doc(db, `products-${subcategoryId}`, productId), {
-        name: newProductName,
-        measures: newMeasures,
-        image: newImageUrl,
-        description: newDescription,
-      });
-      alert("Producto actualizado ✅");
-      // Optionally, refresh product list here
-    } catch (err) {
-      console.error("Error updating product:", err);
-      alert("Error al actualizar producto ❌");
-    }
-  };
+          {/* Show fields specific to Products and Cortes */}
+          {(selectedItem.type === 'product' || selectedItem.type === 'corte') && (
+            <TextField label="URL de Imagen" variant="outlined" fullWidth value={editImage} onChange={(e) => setEditImage(e.target.value)} />
+          )}
 
-  const updateCut = async () => {
-    if (!cutId || !newCutName.trim() || !newCutImage.trim()) return alert("Faltan datos del corte para actualizar.");
-    try {
-      await updateDoc(doc(db, "cortes", cutId), {
-        name: newCutName,
-        image: newCutImage,
-      });
-      alert("Corte actualizado ✅");
-      // Optionally, refresh cut list here
-    } catch (err) {
-      console.error("Error updating cut:", err);
-      alert("Error al actualizar tipo de corte ❌");
-    }
-  };
+          {/* Show fields specific to Products */}
+          {selectedItem.type === 'product' && (
+            <>
+              <TextField label="Medidas" variant="outlined" fullWidth value={editMeasures} onChange={(e) => setEditMeasures(e.target.value)} />
+              <TextField label="Descripción" variant="outlined" multiline rows={4} fullWidth value={editDescription} onChange={(e) => setEditDescription(e.target.value)} />
+            </>
+          )}
 
-  // Find the selected category's subcategories for the subcategory dropdown
-  const subcategoriesForDropdown = getSubcategoriesForCategory(categoryId);
+          <Stack direction="row" spacing={2}>
+            <Button variant="contained" color="primary" onClick={handleUpdate}>Actualizar</Button>
+            <Button variant="outlined" onClick={() => setSelectedItem(null)}>Cancelar</Button>
+          </Stack>
+        </Stack>
+      </Paper>
+    );
+  };
 
   return (
-    <div className="admin-tab-content">
-      {/* === CATEGORÍA === */}
-      <section className="admin-form-section">
-        <h3 className="admin-form-section-title">Editar Categoría</h3>
-        <select
-          className="admin-select"
-          value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
-        >
-          <option value="">Selecciona categoría</option>
-          {catalog.map((cat) => (
-            <option key={cat.id} value={cat.id}>{cat.name}</option>
-          ))}
-        </select>
-        <input
-          className="admin-input"
-          placeholder="Nuevo nombre"
-          value={newCategoryName}
-          onChange={(e) => setNewCategoryName(e.target.value)}
-        />
-        <button className="admin-update-button" onClick={updateCategory}>Actualizar categoría</button>
-      </section>
+    <Box>
+      <Typography variant="h6" gutterBottom>Editar Elementos</Typography>
+      <FormControl sx={{ minWidth: 240, mb: 2 }}>
+        <InputLabel>Tipo de Elemento</InputLabel>
+        <Select value={dataType} label="Tipo de Elemento" onChange={(e) => setDataType(e.target.value)}>
+          <MenuItem value="products">Productos</MenuItem>
+          <MenuItem value="categories">Categorías</MenuItem>
+          <MenuItem value="subcategories">Subcategorías</MenuItem>
+          <MenuItem value="cortes">Tipos de Corte</MenuItem>
+        </Select>
+      </FormControl>
 
-      <div className="admin-section-separator"></div> {/* <--- Styled separator */}
+      <Box sx={{ display: 'flex', gap: 3, height: 'calc(100vh - 350px)' }}>
+        <Paper elevation={2} sx={{ width: 350, overflowY: 'auto' }}>
+          <List>
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>
+            ) : items.length > 0 ? (
+              items.map(item => (
+                <ListItemButton 
+                  key={`${item.type}-${item.id}`} 
+                  selected={selectedItem?.id === item.id}
+                  onClick={() => handleSelect(item)}
+                >
+                  <ListItemText 
+                    primary={item.name} 
+                    secondary={
+                      (item.type === 'subcategory' && `en ${item.parentCategory.name}`) || 
+                      (item.type === 'product' && `en ${item.subcategoryId}`) || null
+                    }
+                  />
+                </ListItemButton>
+              ))
+            ) : (
+              <Alert severity="info" sx={{ m: 2 }}>No se encontraron elementos.</Alert>
+            )}
+          </List>
+        </Paper>
 
-      {/* === SUBCATEGORÍA === */}
-      <section className="admin-form-section">
-        <h3 className="admin-form-section-title">Editar Subcategoría</h3>
-        <select
-          className="admin-select"
-          value={subcategoryId}
-          onChange={(e) => setSubcategoryId(e.target.value)}
-          disabled={!categoryId} // Disable if no category selected
-        >
-          <option value="">Selecciona subcategoría</option>
-          {subcategoriesForDropdown.map((sub) => ( // Use the filtered list
-            <option key={sub.id} value={sub.id}>{sub.name}</option>
-          ))}
-        </select>
-        <input
-          className="admin-input"
-          placeholder="Nuevo nombre subcategoría"
-          value={newSubcategoryName}
-          onChange={(e) => setNewSubcategoryName(e.target.value)}
-          disabled={!subcategoryId} // Disable if no subcategory selected
-        />
-        <button className="admin-update-button" onClick={updateSubcategory}>Actualizar subcategoría</button>
-      </section>
-
-      <div className="admin-section-separator"></div> {/* <--- Styled separator */}
-
-      {/* === PRODUCTO === */}
-      <section className="admin-form-section">
-        <h3 className="admin-form-section-title">Editar Producto</h3>
-        <select
-          className="admin-select"
-          value={productId}
-          onChange={(e) => setProductId(e.target.value)}
-          disabled={!subcategoryId} // Disable if no subcategory selected
-        >
-          <option value="">Selecciona producto</option>
-          {products.map((p) => (
-            <option key={p.id} value={p.id}>{p.name}</option>
-          ))}
-        </select>
-        <input
-          className="admin-input"
-          placeholder="Nuevo nombre"
-          value={newProductName}
-          onChange={(e) => setNewProductName(e.target.value)}
-          disabled={!productId} // Disable if no product selected
-        />
-        <input
-          className="admin-input"
-          placeholder="Medidas"
-          value={newMeasures}
-          onChange={(e) => setNewMeasures(e.target.value)}
-          disabled={!productId}
-        />
-        <input
-          className="admin-input"
-          placeholder="URL imagen"
-          value={newImageUrl}
-          onChange={(e) => setNewImageUrl(e.target.value)}
-          disabled={!productId}
-        />
-        <textarea
-          className="admin-textarea"
-          placeholder="Descripción"
-          value={newDescription}
-          onChange={(e) => setNewDescription(e.target.value)}
-          disabled={!productId}
-        />
-        <button className="admin-update-button" onClick={updateProduct}>Actualizar producto</button>
-
-        <div className="admin-image-preview">
-          <h4 className="admin-preview-title">Vista previa:</h4>
-          {newImageUrl && <img src={newImageUrl} alt="preview" className="admin-preview-image" />}
-          <p className="admin-preview-text"><strong>{newProductName}</strong></p>
-          <p className="admin-preview-text">{newMeasures}</p>
-          <p className="admin-preview-text">{newDescription}</p>
-        </div>
-      </section>
-
-      <div className="admin-section-separator"></div> {/* <--- Styled separator */}
-
-      {/* === TIPO DE CORTE === */}
-      <section className="admin-form-section">
-        <h3 className="admin-form-section-title">Editar Tipo de Corte</h3>
-        <select
-          className="admin-select"
-          value={cutId}
-          onChange={(e) => setCutId(e.target.value)}
-        >
-          <option value="">Selecciona corte</option>
-          {cuts.map(cut => (
-            <option key={cut.id} value={cut.id}>{cut.name}</option>
-          ))}
-        </select>
-        <input
-          className="admin-input"
-          placeholder="Nuevo nombre"
-          value={newCutName}
-          onChange={(e) => setNewCutName(e.target.value)}
-          disabled={!cutId} // Disable if no cut selected
-        />
-        <input
-          className="admin-input"
-          placeholder="URL nueva imagen"
-          value={newCutImage}
-          onChange={(e) => setNewCutImage(e.target.value)}
-          disabled={!cutId}
-        />
-        <button className="admin-update-button" onClick={updateCut}>Actualizar tipo de corte</button>
-
-        <div className="admin-image-preview">
-          <h4 className="admin-preview-title">Vista previa:</h4>
-          {newCutImage && <img src={newCutImage} alt="preview" className="admin-preview-image" />}
-          <p className="admin-preview-text">{newCutName}</p>
-        </div>
-      </section>
-    </div>
+        <Box sx={{ flexGrow: 1 }}>
+          {renderEditForm()}
+        </Box>
+      </Box>
+    </Box>
   );
 }
 

@@ -8,15 +8,13 @@ import {
   FaTiktok,
 } from "react-icons/fa";
 import logoW from "../assets/logoW.png";
-import { useNavigate } from "react-router-dom"; // 👈 Importar useNavigate
+// Import the Link component from React Router
+import { Link } from "react-router-dom"; 
 
 function Footer() {
-  const navigate = useNavigate(); // 👈 Hook de navegación
-
   return (
     <footer className="footer-container">
       <div className="footer-top">
-        {/* Sección izquierda */}
         <ul className="footer-links">
           <li>Printing Methods</li>
           <li>Delivery & Dispatch</li>
@@ -24,12 +22,10 @@ function Footer() {
           <li>Blog</li>
         </ul>
 
-        {/* Logo centrado */}
         <div className="footer-logo">
           <img src={logoW} alt="noir-design" />
         </div>
 
-        {/* Sección derecha */}
         <ul className="footer-social">
           <li
             onClick={() =>
@@ -78,26 +74,26 @@ function Footer() {
         </ul>
       </div>
 
-      {/* Línea inferior */}
       <div className="footer-bottom">
         <p>© 2025 Noir Design</p>
         <p className="divider">|</p>
-        <p onClick={() => window.location.href = '/terminos'}>Términos</p>
-        <p className="divider">|</p>
-        <p onClick={() => navigate("/privacidad")} className="footer-link">
-          Privacidad
+        {/* THE FIX IS HERE: Using the <Link> component for proper navigation */}
+        <p className="footer-link">
+            <Link to="/terminos">Términos</Link>
         </p>
         <p className="divider">|</p>
-        <p
-          onClick={() =>
-            window.open(
-              "https://www.linkedin.com/in/sebastian-ruiz-cisneros/",
-              "_blank",
-              "noopener noreferrer"
-            )
-          }
-        >
-          Creditos del Sitio
+        <p className="footer-link">
+          <Link to="/privacidad">Privacidad</Link>
+        </p>
+        <p className="divider">|</p>
+        <p>
+          <a
+            href="https://www.linkedin.com/in/sebastian-ruiz-cisneros/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Creditos del Sitio
+          </a>
         </p>
       </div>
     </footer>

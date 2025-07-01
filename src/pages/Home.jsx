@@ -4,21 +4,22 @@ import Navbar from "../components/Navbar";
 import useCatalogFromFirebase from "../hooks/useCatalogFromFirebase";
 import Footer from "../components/Footer";
 import TiktokWidget from "../components/TiktokWidget";
+import FeaturedProducts from "../components/FeaturedProducts";
 import "./Home.css";
 import logo from "../assets/logo.png";
 import logoWfull from "../assets/logoWfull.png";
 
 function Home() {
-  const catalog = useCatalogFromFirebase();
-  const navigate = useNavigate();
+  const { catalog } = useCatalogFromFirebase();
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
 
-  // Effect to manage body scroll
   useEffect(() => {
+    // This effect prevents scrolling when the welcome screen or navbar is open
     if (showWelcomeScreen || isNavbarOpen) {
       document.body.classList.add('no-scroll');
     } else {
+      // Add a delay to remove the class to allow for CSS transitions
       const transitionEndDelay = setTimeout(() => {
         document.body.classList.remove('no-scroll');
       }, 1500);
@@ -26,16 +27,24 @@ function Home() {
     }
   }, [showWelcomeScreen, isNavbarOpen]);
 
-  // Function to open navbar/sidebar
   const openNavbar = () => {
     setIsNavbarOpen(true);
+  };
+
+  const handleScrollToFeatured = () => {
+    const featuredSection = document.getElementById('featured-collections');
+    if (featuredSection) {
+      featuredSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   };
 
   return (
     <div className="home-page-wrapper">
       {!showWelcomeScreen && <Navbar catalog={catalog} logo={logo} isOpen={isNavbarOpen} setIsOpen={setIsNavbarOpen} />}
 
-      {/* Welcome Screen - Simplificada */}
       <div
         className={`welcome-screen ${showWelcomeScreen ? 'active' : 'hidden'}`}
         onClick={() => setShowWelcomeScreen(false)}
@@ -57,55 +66,36 @@ function Home() {
         </div>
       </div>
 
-      {/* Main Home Content */}
       <main className={`main-home-content ${showWelcomeScreen ? 'hidden-content' : 'visible-content'}`}>
         <section className="hero-section">
           <div className="hero-overlay"></div>
           <div className="hero-text">
             <h2>Creando Recuerdos Inolvidables</h2>
             <p>Diseños exclusivos y papelería fina para cada ocasión especial.</p>
-            <button className="cta-button enhanced-button" onClick={openNavbar}>
+            <button className="cta-button enhanced-button" onClick={handleScrollToFeatured}>
               <span>Descubre Nuestras Colecciones</span>
             </button>
           </div>
         </section>
 
-        {/* The "Nuestras Colecciones Destacadas" section has been removed */}
-        {/*
-        <section className="featured-products-section">
-          <h3>Nuestras Colecciones Destacadas</h3>
-          <p className="section-subtitle">Los 5 diseños más recientes de nuestro catálogo</p>
-          <div className="product-grid-placeholder">
-            // ... (Removed all product rendering logic here) ...
-          </div>
-          <button className="secondary-button enhanced-button" onClick={openNavbar}>
-            <span>Ver Catálogo Completo</span>
-          </button>
-        </section>
-        */}
+        <FeaturedProducts />
 
         <section className="how-it-works-section">
           <h3>¿Cómo Trabajamos?</h3>
           <p className="section-subtitle">Un proceso simple para materializar tus ideas</p>
           <div className="steps-container">
             <div className="step-item">
-              <div className="step-number">
-                <span>1</span>
-              </div>
+              <div className="step-number"><span>1</span></div>
               <h4>Consulta Personalizada</h4>
               <p>Conversamos sobre tu evento, gustos y necesidades específicas para crear el diseño perfecto.</p>
             </div>
             <div className="step-item">
-              <div className="step-number">
-                <span>2</span>
-              </div>
+              <div className="step-number"><span>2</span></div>
               <h4>Diseño Exclusivo</h4>
               <p>Creamos propuestas únicas adaptadas a tu estilo, con revisiones hasta lograr tu satisfacción total.</p>
             </div>
             <div className="step-item">
-              <div className="step-number">
-                <span>3</span>
-              </div>
+              <div className="step-number"><span>3</span></div>
               <h4>Producción de Calidad</h4>
               <p>Imprimimos con materiales premium y acabados profesionales que garantizan durabilidad y elegancia.</p>
             </div>

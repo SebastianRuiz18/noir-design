@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import ProductGrid from "./ProductList";
+import ProductGrid from "./ProductGrid"; // Corrected import
 
 function ProductList({ catalog }) {
   const { categoryId, subcategoryId } = useParams();

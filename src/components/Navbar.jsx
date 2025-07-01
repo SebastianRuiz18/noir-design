@@ -1,11 +1,9 @@
-// Navbar.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import logo from "../assets/logo.png";
 
-// Receive currentSubcategoryId as a prop
-function Navbar({ catalog, currentSubcategoryId }) { // <--- ADD THIS PROP
+function Navbar({ catalog, currentSubcategoryId }) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState(null);
@@ -15,27 +13,28 @@ function Navbar({ catalog, currentSubcategoryId }) { // <--- ADD THIS PROP
   };
 
   const handleSubcategoryClick = (categoryId, subcategoryId) => {
+    // THE FIX: The URL is now correct, e.g., "/before-the-day/invitations"
     navigate(`/${categoryId}/${subcategoryId}`);
     setOpen(false);
-    setActiveCategory(categoryId); // Keep parent category open when navigating
+    setActiveCategory(categoryId);
   };
 
   const handleHomeClick = () => {
     navigate("/");
     setOpen(false);
-    setActiveCategory(null); // Close any open categories on home
+    setActiveCategory(null);
   };
 
   const handleAboutClick = () => {
     navigate("/about");
     setOpen(false);
-    setActiveCategory(null); // Close any open categories on about
+    setActiveCategory(null);
   };
 
   const handleContactClick = () => {
     navigate("/contact");
     setOpen(false);
-    setActiveCategory(null); // Close any open categories on contact
+    setActiveCategory(null);
   };
 
   return (
@@ -46,19 +45,17 @@ function Navbar({ catalog, currentSubcategoryId }) { // <--- ADD THIS PROP
         <button
           className="hamburger-icon"
           onClick={() => setOpen(true)}
-          aria-label="Abrir menú de navegación" // Accessibility
-          aria-controls="sidenav-menu" // Accessibility
-          aria-expanded={open} // Accessibility
+          aria-label="Abrir menú de navegación"
         >
           &#9776;
         </button>
       )}
 
-      <div className={`sidenav ${open ? "open" : ""}`} id="sidenav-menu" role="navigation"> {/* Accessibility */}
+      <div className={`sidenav ${open ? "open" : ""}`} role="navigation">
         <button
           className="closebtn"
           onClick={() => setOpen(false)}
-          aria-label="Cerrar menú de navegación" // Accessibility
+          aria-label="Cerrar menú de navegación"
         >
           &times;
         </button>
@@ -70,21 +67,20 @@ function Navbar({ catalog, currentSubcategoryId }) { // <--- ADD THIS PROP
 
           <h2 className="navbar-title">Catálogo</h2>
 
-          {catalog.map((category) => (
+          {(catalog || []).map((category) => (
             <div key={category.id} className="category">
               <h3
-                className={`category-name ${activeCategory === category.id || category.subcategories?.some(sub => sub.id === currentSubcategoryId && sub.categoryId === category.id) ? 'active' : ''}`} // Active Category Highlight
+                className={`category-name ${activeCategory === category.id ? 'active' : ''}`}
                 onClick={() => handleCategoryClick(category.id)}
-                aria-expanded={activeCategory === category.id} // Accessibility
               >
                 {category.name}
               </h3>
-              {(activeCategory === category.id || category.subcategories?.some(sub => sub.id === currentSubcategoryId && sub.categoryId === category.id)) && ( // Keep category open if its subcategory is active
+              {activeCategory === category.id && (
                 <ul className="subcategory-list">
-                  {category.subcategories?.map((sub) => (
+                  {(category.subcategories || []).map((sub) => (
                     <li
                       key={sub.id}
-                      className={`subcategory-item ${currentSubcategoryId === sub.id ? 'active' : ''}`} // Active Subcategory Highlight
+                      className={`subcategory-item ${currentSubcategoryId === sub.id ? 'active' : ''}`}
                       onClick={() => handleSubcategoryClick(category.id, sub.id)}
                     >
                       {sub.name}
@@ -95,21 +91,10 @@ function Navbar({ catalog, currentSubcategoryId }) { // <--- ADD THIS PROP
             </div>
           ))}
 
-          {/* Enlaces adicionales fijos abajo */}
           <div className="additional-links">
             <ul>
-              <li
-                onClick={handleAboutClick}
-                className={window.location.pathname === '/about' ? 'active-link' : ''} // Basic active highlighting for fixed links
-              >
-                Sobre Nosotros
-              </li>
-              <li
-                onClick={handleContactClick}
-                className={window.location.pathname === '/contact' ? 'active-link' : ''} // Basic active highlighting for fixed links
-              >
-                Contacto
-              </li>
+              <li onClick={handleAboutClick}>Sobre Nosotros</li>
+              <li onClick={handleContactClick}>Contacto</li>
             </ul>
           </div>
         </div>

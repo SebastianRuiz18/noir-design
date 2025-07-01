@@ -1,19 +1,56 @@
-// src/components/TiktokGrid.jsx
+import { useEffect, useState } from "react";
+import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase";
 import "./TiktokGrid.css";
 
-const tiktoks = [
-  {
-    url: "https://www.tiktok.com/@noirdesignmx/video/7496904992801033490?lang=es-419",
-    thumbnail: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqZk3_A7MIgt8IOOZwagTF1NrxzX8uiPkO_g&s",
-  },
-  {
-    url: "https://www.tiktok.com/@noirdesign/video/1234567891",
-    thumbnail: "https://example.com/thumbnail2.jpg",
-  },
-  // ...hasta 6
-];
-
 function TiktokGrid() {
+  const [tiktoks, setTiktoks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    try {
+      const q = query(
+        collection(db, "tiktoks"),
+        orderBy("createdAt", "desc"),
+        limit(6)
+      );
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map((doc) => doc.data());
+        setTiktoks(data);
+        setLoading(false);
+      }, (err) => {
+        console.error("Error fetching TikToks:", err);
+        setError("No se pudieron cargar los videos de TikTok.");
+        setLoading(false);
+      });
+
+      return () => unsubscribe();
+    } catch (err) {
+      console.error("Error setting up TikTok listener:", err);
+      setError("Ocurrió un error inesperado.");
+      setLoading(false);
+    }
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="tiktok-grid">
+        <h3 className="tiktok-grid-title">Últimos TikToks</h3>
+        <p>Cargando...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="tiktok-grid">
+        <h3 className="tiktok-grid-title">Últimos TikToks</h3>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="tiktok-grid">
       <h3 className="tiktok-grid-title">Últimos TikToks</h3>
