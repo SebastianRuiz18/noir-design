@@ -1,99 +1,60 @@
 /* App.css */
 
 /* --- Adobe Fonts Import --- */
-/* IMPORTANT: This @import rule MUST be at the very top of your CSS file,
-   before any other CSS rules, including :root variables. */
 @import url("https://use.typekit.net/aig5bhe.css");
 
-/* Define CSS Variables for fonts, colors, and spacing */
+/* --- Your Original CSS Variables --- */
 :root {
-  /* Colors - Adapted to your Capricorn Color Palette */
   --color-baby-powder: #F8F7F1;
   --color-alabaster: #E4E0D6;
   --color-khaki: #A69988;
   --color-cafe-noir: #4E3606;
   --color-night: #0E1111;
-
-  /* Semantic Color Mapping for consistency */
-  --navbar-bg-color: var(--color-baby-powder); /* Lightest background */
-  --navbar-text-color: var(--color-cafe-noir); /* Dark brown for main text */
-  --navbar-border-color: var(--color-khaki); /* Medium brown for borders/accents */
-  --hover-color: var(--color-night); /* Very dark for strong hover */
-  --active-link-color: var(--color-khaki); /* Khaki for active/highlighted links */
-  --highlight-text-color: var(--color-cafe-noir); /* Cafe Noir for prominent text (headings, names) */
-  --card-background: #fff; /* Keeping cards pure white for contrast, as seen in product grid */
-  --card-border-color: var(--color-alabaster); /* Very light border for cards */
-
-
-  /* Spacing Variables */
+  --navbar-bg-color: var(--color-baby-powder);
+  --navbar-text-color: var(--color-cafe-noir);
+  --navbar-border-color: var(--color-khaki);
+  --hover-color: var(--color-night);
+  --active-link-color: var(--color-khaki);
+  --highlight-text-color: var(--color-cafe-noir);
+  --card-background: #fff;
+  --card-border-color: var(--color-alabaster);
   --spacing-xs: 5px;
   --spacing-sm: 10px;
   --spacing-md: 15px;
   --spacing-lg: 20px;
   --spacing-xl: 30px;
   --spacing-xxl: 50px;
-
-  /* Navbar Specific Variables (can be moved to Navbar.css if desired, but fine here) */
-  --sidebar-width: 250px; /* Assuming this is the full width when open */
-  --closed-sidebar-width: 70px; /* From your .main-content margin-left */
+  --sidebar-width: 250px;
+  --closed-sidebar-width: 70px;
   --hamburger-size: 30px;
   --close-btn-size: 30px;
-
-  /* --- Font Variables --- */
-  /* "The Seasons" from Adobe Fonts */
   --font-title: "the-seasons", serif;
   --font-title-weight: 300;
   --font-title-style: normal;
-
-  /* Other fonts */
   --font-normal-italic: "Times New Roman", serif;
   --font-body: "Times New Roman", serif;
   --font-accent: "Montserrat", sans-serif;
 }
 
-/* --- Sticky Footer Setup --- */
-/* 1. Ensure HTML and body take full height */
+/* --- Global Element Styles --- */
 html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden; /* Prevents horizontal scrollbar */
+  overflow-x: hidden;
 }
 
-/* 2. Main app container is a flexbox that stretches to full height */
-.app-container {
-  display: flex;
-  min-height: 100vh; /* Ensures the container is at least the full height of the viewport */
-  /* No flex-direction: column here, as Navbar is a sibling of the content wrapper */
-}
-
-/* 3. The main content area *and* footer need to be grouped as a flex column
-      to push the footer down. This will be the `main-content-wrapper` */
-.main-content-wrapper { /* New class for the wrapper around main and footer */
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1; /* This is the key: makes this wrapper take all remaining horizontal space */
-  min-width: 0; /* Important for flex items to prevent overflow issues */
-}
-
-
-/* Apply default body font */
 body {
   font-family: var(--font-body);
   color: var(--navbar-text-color);
   margin: 0;
   padding: 0;
-  box-sizing: border-box; /* Ensures padding/border are included in element's total width/height */
+  box-sizing: border-box;
   line-height: 1.6;
   background-color: var(--color-baby-powder);
 }
 
-/* Global resets for list and headings */
-ul {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
+ul { padding: 0; margin: 0; list-style: none; }
 
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
@@ -104,50 +65,55 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--highlight-text-color);
 }
 
-p {
-  margin-top: 0;
-  margin-bottom: 1em;
+p { margin-top: 0; margin-bottom: 1em; }
+
+/* --- FIX FOR ALL LINKS --- */
+a {
+  color: inherit; /* Links will take the color of their parent text */
+  text-decoration: none; /* No underlines */
+  transition: color 0.2s ease;
+}
+a:hover {
+  color: var(--hover-color);
 }
 
-/* Main content wrapper to prevent overlap with Navbar */
-/* This is now INSIDE .main-content-wrapper, and should grow */
+
+/* --- Your Original Layout Styles --- */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+}
+
 .main-content {
-  margin-left: var(--closed-sidebar-width); /* Default margin for closed sidebar */
-  padding: var(--spacing-lg); /* Use spacing variables */
+  margin-left: var(--closed-sidebar-width);
+  padding: var(--spacing-lg);
   transition: margin-left 0.4s ease-in-out;
-  flex-grow: 1; /* This makes the actual page content area push the footer down */
-  box-sizing: border-box; /* Crucial for padding not adding to width/height */
+  flex-grow: 1;
+  box-sizing: border-box;
 }
 
-/* Adjust main content when the sidebar is open */
-/* Assuming 'sidenav' is a class on your Navbar component, and 'open' is added when it's open */
 .sidenav.open ~ .main-content {
-  margin-left: var(--sidebar-width); /* Adjust margin for open sidebar */
+  margin-left: var(--sidebar-width);
 }
 
-/* Responsive adjustments for main content */
 @media (max-width: 768px) {
-  /* On smaller screens, the sidebar might disappear or become an overlay.
-     The main-content should likely go full width. */
   .main-content {
-    margin-left: 0; /* Remove fixed margin for smaller screens */
+    margin-left: 0;
     padding: var(--spacing-md);
   }
-  /* If Navbar becomes an overlay, this selector might not be needed or needs adjustment */
   .sidenav.open ~ .main-content {
-    /* If the sidebar is an overlay, main content doesn't need margin-left */
     margin-left: 0;
   }
+}
 
-  /* App.css (or index.css) - Add this */
 body.no-scroll {
   overflow: hidden;
   height: 100vh;
-}
-}
-
-@media (max-width: 480px) {
-  .main-content {
-    padding: var(--spacing-sm);
-  }
 }
